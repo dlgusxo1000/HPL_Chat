@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "scheme": "myapp",
+    "name": "HPL",
+    "slug": "HPL_chat",
+    "privacy": "public",
+    "sdkVersion": "36.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/b9a79e1bdc27f0dd1008fd2719aa2287.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.HPL.HPL",
+      "intentFilters": [ 
+        { 
+          "action": "VIEW", 
+          "data": [{ 
+            "scheme": "your-scheme" 
+          }], 
+          "category": [ 
+            "BROWSABLE" , 
+            "DEFAULT" 
+          ] 
+        } 
+      ] 
+      
+
+    }
+    
+  }
+}
