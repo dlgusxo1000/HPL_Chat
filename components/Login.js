@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TextInput, Alert} from 'react-native';
 import CustomButton from './CustomButton';
+import firebaseApp from './firebaseConfig';
 
 
 
@@ -26,7 +27,7 @@ class Login extends Component {
   
   goSignup = () => {
     
-    this.props.navigation.navigate('Signup');
+    this.props.navigation.navigate('SignUp');
   }
  
 UserLoginFunction = () =>{
@@ -78,6 +79,33 @@ fetch('http://192.168.43.18/react/login.php', {
  
  
   }
+
+  async signIn() {
+   // const { user_id }  = this.state ;
+
+    if (this.state.user_id != '' && this.state.password != '') {
+      try {
+        await firebaseApp.auth().signInWithEmailAndPassword(this.state.user_id, this.state.user_password);
+        console.log(this.state.user_id + ' signed in');
+        this.props.navigation.navigate('Home', { 
+          user_id: this.state.user_id 
+        });
+      } catch(error) {
+        console.log(error.toString());
+        Alert.alert(error.toString());
+      }
+    }
+    else {
+      Alert.alert(
+        'Invalid Sign In',
+        'The Email and Password fields cannot be blank.',
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+        { cancelable: false }
+      )
+    }
+  }
   
   render() {
     return (
@@ -110,7 +138,7 @@ fetch('http://192.168.43.18/react/login.php', {
             buttonColor={'white'}
             titleColor = {'black'}
             title={'로그인'}
-            onPress={this.UserLoginFunction}/>
+            onPress={this.signIn.bind(this)}/>
         </View>
         <View style={styles.footer}>
           <CustomButton

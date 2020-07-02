@@ -20,9 +20,11 @@ class Home extends React.Component {
     this.roomsRef = firebaseDB.ref('rooms');
     this.state = {
       rooms: [],
-      newRoom: '',
-      user_id : '',
+      user_id : this.props.navigation.state.params.user_id,
+     
+      
     }
+    this.openMessages = this.openMessages.bind(this);
   }
 
   componentDidMount() {
@@ -41,34 +43,48 @@ class Home extends React.Component {
       this.setState({ rooms: roomsFB });
     });
   }
-
+  
   _getName() {
-    const {user_id} = this.state;
+    //const {user_id} = this.state;
 
     if(this.props.navigation.state.params){
       const user_id = this.props.navigation.state.params.user_id;
-      this.user_id = user_id;
+      this.setState({user_id: user_id});
       
     }
   }
 
+
   addRoom() {
     
-    this._getName();
+    //this._getName();
     //Alert.alert(this.state.user_id);
+    this.roomsRef.orderByChild('name').equalTo(this.state.user_id).once('value', snapshot => {
+      if(snapshot.exists()){
+        
+        this.openMessages(this.state.rooms, this.state.user_id);
+       
+      }
+      else {
+        this.roomsRef.push({ name: this.state.user_id });
+        
+      }
+    })
     
     
     
-    this.roomsRef.push({ name: this.user_id });
-    //this.setState({ newRoom: '' });
   }
 
-  openMessages(room) {
-    this.props.navigation.navigate('Chat', {roomKey: room.key, roomName: room.name});
+  openMessages(rooms, user_id) {
+    for(var i in rooms){
+      if(user_id == rooms[i].name){
+        this.props.navigation.navigate('Chat', {roomKey : rooms[i].key, roomName : rooms[i].key, user_id : user_id});
+      }
+    }
   }
 
 
-   
+  
     
     onPress = () =>
      this.props.navigation.navigate('Chat');
@@ -104,7 +120,7 @@ class Home extends React.Component {
         </View>
 
         <View style = {styles.section2}>
-        <TouchableOpacity onPress={this.onPress}>
+        <TouchableOpacity onPress={this.test}>
             <Image 
               source ={{uri : 'https://cdn.icon-icons.com/icons2/858/PNG/512/chat_without_content_v2_icon-icons.com_67752.png',}}
               style = {styles.ImageIcon2}>                  
@@ -127,7 +143,8 @@ class Home extends React.Component {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.footer}>
+        <View style={styles.footer}
+              hide = {this.state.setHide}>
         <TouchableOpacity 
             style={styles.button}
             backgroundColor='#fff'
@@ -137,8 +154,6 @@ class Home extends React.Component {
                 방 생성
             </Text>
             </TouchableOpacity>
-
-
         </View>
         
         

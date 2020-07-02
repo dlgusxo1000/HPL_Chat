@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "myapp",
+    
     "name": "HPL",
     "slug": "HPL_chat",
     "privacy": "public",
@@ -33,7 +33,7 @@
         { 
           "action": "VIEW", 
           "data": [{ 
-            "scheme": "your-scheme" 
+            "scheme": "myapp" 
           }], 
           "category": [ 
             "BROWSABLE" , 

@@ -1,6 +1,6 @@
 import firebase from "firebase";
 
-// Initialize Firebase
+
 const firebaseConfig = {
           apiKey: 'AIzaSyA9ZdPFwXCHXagCP1FXxEzpnHPozFewAAw',
           authDomain: 'hpl-chat-d2cb8.firebaseapp.com',

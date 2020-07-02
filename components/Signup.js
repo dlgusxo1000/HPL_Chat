@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TextInput, Alert} from 'react-native';
 import CustomButton from './CustomButton';
+import firebaseApp from './firebaseConfig';
 
-
-class Signup extends Component {
+class SignUp extends Component {
 
   
   constructor(props) {
@@ -47,6 +47,30 @@ class Signup extends Component {
 
 
   }
+
+  async signUp() {
+    if (this.state.id != '' && this.state.password != '') {
+      try {
+        await firebaseApp.auth().createUserWithEmailAndPassword(this.state.id, this.state.password);
+        console.log(this.state.id + ' signed up');
+        this.props.navigation.navigate('Rooms');
+      } catch(error) {
+        console.log(error.toString());
+        Alert.alert(error.toString());
+      }
+    }
+    else {
+      Alert.alert(
+        'Invalid Sign Up',
+        'The Email and Password fields cannot be blank.',
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+        { cancelable: false }
+      )
+    }
+  }
+
 
 
   render() {
@@ -101,7 +125,7 @@ class Signup extends Component {
             buttonColor={'white'}
             titleColor = {'black'}
             title={'회원가입'}
-            onPress={this.registration_Function}/>
+            onPress={this.signUp.bind(this)}/>
 
         </View>
       </View>
@@ -139,4 +163,4 @@ const styles = StyleSheet.create({
     //backgroundColor: '#1ad657',
   },
 });
-export default Signup;
+export default SignUp;

@@ -1,10 +1,11 @@
 import Home from './Home';
 import Chat from './Chat';
 import Login from './Login';
-import Signup from './Signup';
+import SignUp from './SignUp';
 import QRScreen from './QRScreen';
 import Push from './Push';
-import Rooms from './Rooms';
+import info from './info.js';
+
 
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -20,10 +21,10 @@ const navigator = createStackNavigator({
   Login: { screen: Login},
   Home: { screen: Home},
   Chat: { screen: Chat},
-  Signup: { screen: Signup},
+  SignUp: { screen: SignUp},
   QRScreen: { screen: QRScreen},
-  Rooms: { screen: Rooms},
   Push: { screen: Push},
+  info: { screen: info},
 });
 const AppContainer = createAppContainer(navigator);
 
