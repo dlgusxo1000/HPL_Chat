@@ -53,7 +53,9 @@ class SignUp extends Component {
       try {
         await firebaseApp.auth().createUserWithEmailAndPassword(this.state.id, this.state.password);
         console.log(this.state.id + ' signed up');
-        this.props.navigation.navigate('Rooms');
+        this.props.navigation.navigate('Login');
+
+        this.registration_Function();
       } catch(error) {
         console.log(error.toString());
         Alert.alert(error.toString());

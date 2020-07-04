@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, TextInput, Alert} from 'react-native';
+import {StyleSheet, Text, View, Image, TextInput, Alert, Button} from 'react-native';
 import CustomButton from './CustomButton';
 import firebaseApp from './firebaseConfig';
-
+import { Linking } from 'expo';
 
 
 class Login extends Component {
@@ -23,7 +23,7 @@ class Login extends Component {
  
   }
   
-  
+
   
   goSignup = () => {
     
@@ -139,6 +139,7 @@ fetch('http://192.168.43.18/react/login.php', {
             titleColor = {'black'}
             title={'로그인'}
             onPress={this.signIn.bind(this)}/>
+            
         </View>
         <View style={styles.footer}>
           <CustomButton

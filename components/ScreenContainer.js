@@ -24,7 +24,7 @@ const navigator = createStackNavigator({
   SignUp: { screen: SignUp},
   QRScreen: { screen: QRScreen},
   Push: { screen: Push},
-  info: { screen: info},
+  info: { screen: info, path : "info/:roomKey"},
 });
 const AppContainer = createAppContainer(navigator);
 

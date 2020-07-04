@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Container from './components/ScreenContainer';
-import { YellowBox } from 'react-native';
+import { YellowBox , } from 'react-native';
 import _ from 'lodash';
-import DeepLinking from 'react-native-deep-link';
+import { Linking } from 'expo';
 
 
 YellowBox.ignoreWarnings(['Setting a timer']);
@@ -13,10 +13,12 @@ console.warn = message => {
   }
 };
 
+const uriPrefix = Linking.makeUrl('/');
+
 
 
 export default class App extends Component {
-  
+
   constructor() {
 
     super();
@@ -27,20 +29,22 @@ export default class App extends Component {
       user_id : '',
     }
   }
-  componentDidMount() {
-    DeepLinking.addScheme('myapp://');
-    Linking.addEventListener('url', this.handleUrl);
 
-    DeepLinking.addRoute('/info/:id', (user_id) => {
-      // example://test/23
-      this.setState({ user_id });
+  componentDidMount() {
+    Linking.getInitialURL().then(url => {
+      // const { path, queryParams } = Linking.parse(url);
+      // Linking.openURL(url);
     });
+    Linking.addEventListener("url", this._handleUrl);
   }
-  
+  _handleUrl = url => {
+    const { path, queryParams } = Linking.parse(url);
+    
+  };
 
   render() {
     return (
-      <Container />
+      <Container uriPrefix={uriPrefix}/>
     );
   }
 }

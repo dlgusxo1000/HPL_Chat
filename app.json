@@ -1,6 +1,6 @@
 {
   "expo": {
-    
+    "scheme" : "myapp",
     "name": "HPL",
     "slug": "HPL_chat",
     "privacy": "public",
@@ -29,11 +29,13 @@
     },
     "android": {
       "package": "com.HPL.HPL",
+      "googleServicesFile": "./google-services.json",
       "intentFilters": [ 
         { 
           "action": "VIEW", 
           "data": [{ 
-            "scheme": "myapp" 
+            "scheme": "myapp" ,
+            "host" : "info"
           }], 
           "category": [ 
             "BROWSABLE" , 

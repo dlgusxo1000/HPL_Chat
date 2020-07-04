@@ -4,7 +4,7 @@ import QRCode from 'react-native-qrcode-svg';
 
 
 import {
-    
+    Alert,
     StyleSheet,
     View,
     TextInput,
@@ -16,30 +16,31 @@ class QRScreen extends React.Component {
 
   state = {
     inputT: '',
-    valueForQRCode: 'https://www.choolab.com',
+    roomKey: '',
+    valueForQRCode: 'myapp://info',
   };
 
-  getTextInputValue = () => {
+  componentDidMount() {
+    if(this.props.navigation.state.params){
+      const roomKey = this.props.navigation.state.params.roomKey;
+      this.setState({roomKey: roomKey});
+      
+    }
+  }
 
-    this.setState({ valueForQRCode: this.state.inputT });
+  getTextInputValue = () => {
+    const value = 'myapp://info/';
+    const temt = value + this.state.roomKey;
+   
+    this.setState({ valueForQRCode: temt });
+    
   };
  
   render() {
     return (
       <View style={styles.container}>
-        <TextInput
-          underlineColorAndroid="transparent"
-          style={styles.input}
-          onChangeText={(text) => this.setState({inputT: text})}
-          value={this.state.inputT}
-        />
-
-        <TouchableOpacity
-          onPress={this.getTextInputValue}
-          activeOpacity={0.7}
-          style={styles.button}>
-          <Text style={styles.TextStyle}> QR코드 생성 </Text>
-        </TouchableOpacity>
+        
+        
 
         <QRCode
           
@@ -48,7 +49,12 @@ class QRScreen extends React.Component {
           bgColor='#000000'
           fgColor='#FFFFFF'/>
 
-          
+        <TouchableOpacity 
+          onPress={this.getTextInputValue}
+          activeOpacity={0.7}
+          style={styles.button}>
+          <Text style={styles.TextStyle}> QR코드 생성 </Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -64,7 +70,7 @@ const styles = StyleSheet.create({
 
     button: {
       width: '65%',
-      
+      height: '10%',
       backgroundColor: 'blue',
       margin: 10,
       borderRadius: 5,
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
     TextStyle: {
       color: '#fff',
       textAlign: 'center',
-      fontSize: 18,
+      fontSize: 30,
     },
  
     input: {

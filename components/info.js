@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Text, Image, View, Button, StyleSheet, Alert} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CustomButton from './CustomButton';
-import { getProvidesAudioData } from 'expo/build/AR';
+
 
 
 class info extends Component {
@@ -10,28 +10,35 @@ class info extends Component {
     constructor() {
         super();
         this.state = {
-            user_id : ''
+            user_id : 'guest',
+            roomKey : ''
         }
     }
 
     componentDidMount() {
-        this.getID();
+      this.test();
+    }
+
+    test = () => {
+      if(this.props.navigation.state.params){
+        const roomKey = this.props.navigation.state.params.roomKey;
+        this.setState({roomKey: roomKey});
       }
-
-    getID() {
-        if(this.props.navigation.state.params){
-            const user_id = this.props.navigation.state.params.user_id;
-            this.setState({user_id: user_id});
-            
-          }
-    }
-    test1() {
-        Alert.alert(this.state.user_id);
     }
 
-    render(){
+    test2 = () => {
+      //Alert.alert(this.state.roomKey);
+      this.openMessages(this.state.roomKey, this.state.user_id)
+    }
 
+    openMessages(roomKey, user_id) {
+      
+      this.props.navigation.navigate('Chat', {roomKey : roomKey, user_id : user_id});
         
+      
+    }
+    
+    render(){
 
         return(
         <View style ={styles.container}>
@@ -52,7 +59,8 @@ class info extends Component {
             buttonColor={'white'}
             titleColor = {'black'}
             title={'채팅하기'}
-            onPress={test1()}></CustomButton>
+            onPress={this.test2}
+            ></CustomButton>
         </View>
         </View>
         );

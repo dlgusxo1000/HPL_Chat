@@ -78,12 +78,21 @@ class Home extends React.Component {
   openMessages(rooms, user_id) {
     for(var i in rooms){
       if(user_id == rooms[i].name){
+        console.log(rooms[i].key);
         this.props.navigation.navigate('Chat', {roomKey : rooms[i].key, roomName : rooms[i].key, user_id : user_id});
       }
     }
   }
 
-
+  goPush(rooms, user_id) {
+    for(var i in rooms){
+      if(user_id == rooms[i].name){
+        console.log(rooms[i].key);
+        this.props.navigation.navigate('QRScreen', {roomKey : rooms[i].key});
+      }
+    }
+    
+  }
   
     
     onPress = () =>
@@ -93,8 +102,10 @@ class Home extends React.Component {
      this.props.navigation.navigate('Login');
      onPress2 = () =>
      this.props.navigation.navigate('Signup');
-     onPress3 = () =>
-     this.props.navigation.navigate('QRScreen');
+     onPress3 = () => {
+      this.goPush(this.state.rooms, this.state.user_id);
+     }
+     
      onPress4 = () =>
      this.props.navigation.navigate('Push');
 
