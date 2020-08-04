@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, TextInput, Alert, Button} from 'react-native';
+import {StyleSheet, Text, View, Image, TextInput, Alert, ImageBackground} from 'react-native';
 import CustomButton from './CustomButton';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import firebaseApp from './firebaseConfig';
-import { Linking } from 'expo';
 
 
-class Login extends Component {
+class Login extends React.Component {
 
-  
+  onPress1 = () =>
+   this.props.navigation.navigate('Signup');
 
   constructor(props) {
  
@@ -16,69 +17,18 @@ class Login extends Component {
     this.state = {
  
       user_id: '',
-      user_password: '',
-      isLoaded : false
-      
+      user_password: ''
+ 
     }
  
   }
-  
-
-  
-  goSignup = () => {
+ 
+  goSignUp = () => {
     
     this.props.navigation.navigate('SignUp');
   }
  
-UserLoginFunction = () =>{
 
-  
- 
- const { user_id }  = this.state ;
- const { user_password }  = this.state ;
- 
- 
-fetch('http://192.168.43.18/react/login.php', {
-  method: 'POST',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
- 
-    user_id: user_id,
- 
-    user_password: user_password
- 
-  })
- 
-}).then((response) => response.json())
-      .then((responseJson) => {
-        // If server response message same as Data Matched
-       if(responseJson === 'Data Matched')
-        { 
-          this.props.navigation.navigate("Chat",  {
-            user_id: user_id,
-         });
-          this.props.navigation.navigate("Home", {
-            user_id: user_id,
-          });
-          this.props.navigation.navigate("Rooms", {
-            user_id: user_id,
-          });
-
-          this.props.navigation.navigate('Home');
-          
-        }
-        else{
-          Alert.alert(responseJson);
-        }
-      }).catch((error) => {
-        console.error(error);
-      });
- 
- 
-  }
 
   async signIn() {
    // const { user_id }  = this.state ;
@@ -107,47 +57,74 @@ fetch('http://192.168.43.18/react/login.php', {
     }
   }
   
+
   render() {
     return (
       <View style={styles.container}>
-        
-
-        <View style={styles.header} />
-        <View style={styles.title}>
-          <Text style={{fontSize:35,paddingBottom:20}}>로그인</Text>
-          <View style={{width:"100%",borderBottomWidth:0.5,borderColor:'#444'}} />
-        </View>
+        <ImageBackground
+              style = {{ width: "100%", height: "100%" }}
+              source = {require("./Photo/background7.jpg")}>
+          <View style={styles.header}>
+            <Text style={styles.title}> 
+              <Icon name="dog" size={35} color="white" />HPL
+            </Text>
+          </View>        
+          <View style={styles.login}>
+            <Text style = {{fontSize:32,
+                            paddingBottom:20,
+                            color:'white'}}>
+                            <Icon name="user" size={30} color="white" />로그인
+                            </Text>
+            {/*<View style={{width:"100%",borderBottomWidth:1,borderColor:'white'}} />*/}
+          </View>
         <View style={styles.content}>
-          <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingBottom:10}}>
-            <Text style={{fontSize:15}}>아이디</Text>
+          <View style={{flexDirection:'row',
+                        justifyContent:'space-between',
+                        alignItems:'center',
+                        paddingBottom:10}}>
+            <Text style={{fontSize:20,color : 'white',fontWeight : "bold"}}>아이디</Text>
             <TextInput 
-            style={{borderColor: '#aaa', width:'70%', height:35, borderWidth: 1, borderRadius: 5, padding:5}}
-            onChangeText={user_id => this.setState({user_id})}
+              style={{
+                      width:'70%', 
+                      height:35, 
+                      borderWidth: 2, 
+                      borderRadius: 10, 
+                      padding:5, 
+                      borderColor :'white'}}
+                      onChangeText={user_id => this.setState({user_id})}
             />
           </View>
-          <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingBottom:10}}>
-            <Text style={{fontSize:15}}>비밀번호</Text>
+          <View style={{flexDirection:'row',
+                        justifyContent:'space-between',
+                        alignItems:'center',
+                        paddingBottom:10}}>
+            <Text style={{fontSize:20,color : 'white', fontWeight : "bold"}}>비밀번호</Text>
             <TextInput 
-            style={{borderColor: '#aaa', width:'70%', height:35, borderWidth: 1, borderRadius: 5, padding:5}}
-            onChangeText={user_password => this.setState({user_password})}
+             style={{
+                    width:'70%', 
+                    height:35,
+                    borderWidth: 2, 
+                    borderRadius: 10,
+                    padding:5,
+                    borderColor :'white'}}
+                    onChangeText={user_password => this.setState({user_password})}
             />
           </View>
         </View>
         <View style={styles.footer}>
           <CustomButton
-            buttonColor={'white'}
-            titleColor = {'black'}
-            title={'로그인'}
+            buttonColor={'null'}
+            titleColor = {'white'}
+            title={'Login'}
             onPress={this.signIn.bind(this)}/>
-            
+            <CustomButton
+            buttonColor={'null'}
+            titleColor = {'white'}
+            title={'Sign up'}
+            onPress={this.goSignUp}
+            />
         </View>
-        <View style={styles.footer}>
-          <CustomButton
-            buttonColor={'white'}
-            titleColor = {'black'}
-            title={'회원가입'}
-            onPress={this.goSignup}/>
-        </View>
+        </ImageBackground>
       </View>
     );
   }
@@ -156,31 +133,49 @@ fetch('http://192.168.43.18/react/login.php', {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: 'white',
   },
   header: {
-    width:'100%',
-    height:'5%',
-    //backgroundColor: '#ff9a9a',
+    height : '10%',
+   // backgroundColor: '#fff',
+    alignItems: 'center',
+    alignContent : 'center',
+    marginBottom : '5%',
+  }, 
+  title : {
+    fontSize : 35,
+    fontWeight : "700",
+    color : "white",
+    marginTop : '6%',
+    //marginLeft : '-3%',
   },
-  title: {
+  login: {
+    flex : 0.23,
     width:'100%',
     height:'18%',
+    justifyContent: 'center',
+    alignItems: 'center',
     justifyContent: 'center',
     //backgroundColor: '#9aa9ff',
   },
   content: {
-    //flex :1 ,
+    flex :0.2 ,
     paddingLeft:10,
     paddingRight:10,
     paddingBottom:20,
    // backgroundColor: '#d6ca1a',
   },
   footer: {
+    flex : 0.26,
+    alignItems: 'center',
+    justifyContent: 'center',
     width:'100%',
-    height:'10%',
+    height:'20%',
     //backgroundColor: '#1ad657',
   },
+  oror : {
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+  }
 });
 export default Login;

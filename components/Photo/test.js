@@ -89,7 +89,7 @@ class SignUp extends Component {
       <View style={styles.container}>
          <ImageBackground
               style = {{ width: "100%", height: "100%" }}
-              source = {require("./Photo/background7.jpg")}>
+              source = {require("./background7.jpg")}>
           <View style={styles.header}>
             <Text style={styles.title}> 
               <Icon name="dog" size={35} color="white" />HPL

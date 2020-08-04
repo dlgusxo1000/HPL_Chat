@@ -1,6 +1,7 @@
 
 import React from 'react'
 import QRCode from 'react-native-qrcode-svg';
+import * as Linking from 'expo-linking';
 
 
 import {
@@ -18,12 +19,15 @@ class QRScreen extends React.Component {
     inputT: '',
     roomKey: '',
     valueForQRCode: 'myapp://info',
+    user_id : this.props.navigation.state.params.user_id,
   };
 
   componentDidMount() {
     if(this.props.navigation.state.params){
       const roomKey = this.props.navigation.state.params.roomKey;
-      this.setState({roomKey: roomKey});
+      const user_id = this.props.navigation.state.params.user_id;
+      this.setState({roomKey : roomKey, user_id : user_id});
+      
       
     }
   }
@@ -36,6 +40,11 @@ class QRScreen extends React.Component {
     
   };
  
+  goInfo = () => {
+    this.props.navigation.navigate('info', {roomKey : this.state.roomKey, user_id : this.state.user_id});
+  // Alert.alert(this.state.user_id);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -50,10 +59,10 @@ class QRScreen extends React.Component {
           fgColor='#FFFFFF'/>
 
         <TouchableOpacity 
-          onPress={this.getTextInputValue}
+          onPress={this.goInfo}
           activeOpacity={0.7}
           style={styles.button}>
-          <Text style={styles.TextStyle}> QR코드 생성 </Text>
+          <Text style={styles.TextStyle}> QR코드 생성</Text>
         </TouchableOpacity>
       </View>
     );

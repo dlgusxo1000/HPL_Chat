@@ -5,6 +5,7 @@ import SignUp from './SignUp';
 import QRScreen from './QRScreen';
 import Push from './Push';
 import info from './info.js';
+import Pet from './Pet.js';
 
 
 import { createAppContainer } from 'react-navigation';
@@ -24,6 +25,7 @@ const navigator = createStackNavigator({
   SignUp: { screen: SignUp},
   QRScreen: { screen: QRScreen},
   Push: { screen: Push},
+  Pet: { screen : Pet},
   info: { screen: info, path : "info/:roomKey"},
 });
 const AppContainer = createAppContainer(navigator);

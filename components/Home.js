@@ -4,10 +4,10 @@ import {
   Text, 
   View, 
   Image, 
-  
+  ImageBackground,
   TouchableOpacity, 
   Alert } from 'react-native';
-
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import firebaseApp from './firebaseConfig';
 
 
@@ -84,11 +84,11 @@ class Home extends React.Component {
     }
   }
 
-  goPush(rooms, user_id) {
+  goQrscreen(rooms, user_id) {
     for(var i in rooms){
       if(user_id == rooms[i].name){
         console.log(rooms[i].key);
-        this.props.navigation.navigate('QRScreen', {roomKey : rooms[i].key});
+        this.props.navigation.navigate('QRScreen', {roomKey : rooms[i].key, user_id : user_id});
       }
     }
     
@@ -96,209 +96,135 @@ class Home extends React.Component {
   
     
     onPress = () =>
-     this.props.navigation.navigate('Chat');
+    this.props.navigation.navigate('Pet', {user_id : this.state.user_id});
      
     onPress1 = () =>
      this.props.navigation.navigate('Login');
+
      onPress2 = () =>
      this.props.navigation.navigate('Signup');
+     
      onPress3 = () => {
-      this.goPush(this.state.rooms, this.state.user_id);
+      this.goQrscreen(this.state.rooms, this.state.user_id);
      }
      
      onPress4 = () =>
      this.props.navigation.navigate('Push');
 
-  render(){
+     render(){
 
-    return (
-      <View style={styles.container}>
-        
-        <View style={styles.header}>
-          <Text style={styles.title}>HPL</Text>
-        </View>
-
-        <View style = {styles.section1}>
-          <TouchableOpacity onPress={this.onPress3}>
-            <Image 
-              source ={{uri : 'https://miro.medium.com/max/1400/1*sHmqYIYMV_C3TUhucHrT4w.png',}}
-              style = {styles.ImageIcon1}>                  
-            </Image>
-            <Text style = {styles.imagetext}>
-              QR code를 통해 간편하게 반려동물의 정보를 등록할 수 있습니다
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style = {styles.section2}>
-        <TouchableOpacity onPress={this.test}>
-            <Image 
-              source ={{uri : 'https://cdn.icon-icons.com/icons2/858/PNG/512/chat_without_content_v2_icon-icons.com_67752.png',}}
-              style = {styles.ImageIcon2}>                  
-            </Image>
-            <Text style = {styles.imagetext}>
-              발견자와의 1:1 채팅이 가능합니다
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style = {styles.section3}>
-        <TouchableOpacity onPress={this.onPress4}>
-            <Image 
-              source ={{uri : 'https://cdn.icon-icons.com/icons2/1997/PNG/512/alarm_alert_bell_notification_ring_icon_123294.png',}}
-              style = {styles.ImageIcon3}>                  
-            </Image>
-            <Text style = {styles.imagetext}>
-              푸쉬 알림을 통해 인근 지역의 회원에게 알림메시지
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.footer}
-              hide = {this.state.setHide}>
-        <TouchableOpacity 
-            style={styles.button}
-            backgroundColor='#fff'
-            onPress={() => this.addRoom()}
-            >
-            <Text style ={styles.title1}>
-                방 생성
-            </Text>
-            </TouchableOpacity>
-        </View>
-        
-        
-            <TouchableOpacity 
-            style={styles.button}
-            backgroundColor='#fff'
-            onPress={this.onPress2}>
-            <Text style ={styles.title1}>
-                회원가입
-            </Text>
-            </TouchableOpacity>
-        
-
-
-      </View>
-    );
-  }
-}
-
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex :1,
-    backgroundColor: '#fff',
-    flexDirection : 'column',
+      return (
+        <View style={styles.container}>
+          <ImageBackground
+                style = {{ width: "100%", height: "100%" }}
+                source = {require("./Photo/background7.jpg")}>
   
-  },
-
-  header: {
-    height : '20%',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    alignContent : 'center',
+          <View style={styles.header}>
+            <Text style={styles.title}> <Icon name="dog" size={35} color="white" />HPL</Text>
+  
+          </View>
+          
+        <View style={styles.buttonHeight}>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <TouchableOpacity onPress={this.onPress3} style={styles.buttonGroup}>
+              <View>
+                <Icon name="qrcode" size={75} color="white" /> 
+                <Text style={styles.imagetext}>QR코드 생성</Text>
+  
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={this.onPress} 
+              style={styles.buttonGroup}>
+              <View>
+                <Icon name="comments" size={75} color="white" /> 
+                <Text style={styles.imagetext}>채팅방 입장</Text>
+  
+              </View>
+            </TouchableOpacity>
+          </View>
+  
+          <View style={{flex: 1, flexDirection: 'row'}}>
+  
+            <TouchableOpacity onPress={this.onPress4} style={styles.buttonGroup}>
+              <View>
+                <Icon name="bell" size={75} color="white" /> 
+                <Text style={styles.imagetext}>Push 알림</Text>
+  
+              </View>
+            </TouchableOpacity>
+  
+            <TouchableOpacity onPress={() => this.addRoom()} style = {styles.buttonGroup}>
+              <View >
+                <Icon name="comment" size={75} color="white" /> 
+                <Text style={styles.imagetext}>채팅방 생성</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+          </ImageBackground>
+        </View>
+      );
+    }
+  }
+  
+  
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex :1,
+    },
+    buttonHeight : {
+      height :430,
+    },
+    header: {
+      height : '10%',
+     // backgroundColor: '#fff',
+      alignItems: 'center',
+      alignContent : 'center',
+      marginBottom : '5%',
+    }, 
+    title : {
+      fontSize : 30,
+      fontWeight : "700",
+      color : "white",
+      marginTop : '6%',
+      //marginLeft : '-3%',
+    },
     
-  }, 
-
-  section1: {
-    height : '20%',
-    backgroundColor : '#fff',
-    alignItems : 'center',
-    alignContent : 'center',
-    flexDirection : 'row',
-    borderWidth : 0.5,
-    borderColor : 'black'
-    
-  },
-
-  section2: {
-    height : '20%',
-    backgroundColor : '#fff',
-    alignItems : 'center',
-    alignContent : 'center',
-    flexDirection : 'row',
-    borderWidth : 0.5,
-    borderColor : 'black'
-  },
-
-  section3: {
-    height : '20%',
-    backgroundColor : '#fff',
-    alignItems : 'center',
-    alignContent : 'center',
-    flexDirection : 'row',
-    borderWidth : 0.5,
-    borderColor : 'black'
-  },
-
-
-  ImageIcon1 : {
-    alignItems : 'center',
-    alignContent : 'center',
-    width : '70%',
-    height : '70%',
-    resizeMode : 'contain',
-    marginLeft : '15%'
-  },  
-
-  ImageIcon2 : {
-    alignItems : 'center',
-    alignContent : 'center',
-    width : '70%',
-    height : '70%',
-    resizeMode : 'contain',
-    marginLeft : '52%'
-  }, 
-
-  ImageIcon3 : {
-    alignItems : 'center',
-    alignContent : 'center',
-    width : '70%',
-    height : '70%',
-    resizeMode : 'contain',
-    marginLeft : '25%'
-  }, 
-
-  footer: {
-    height : '20%',
-    width : '100%',
-    backgroundColor : '#fff',
-    alignItems : 'center',
-    alignContent : 'center',
-  },
-
-  title : {
-    fontSize : 30,
-    fontWeight : "700",
-    color : "black",
-    padding : 55,
-  },
-  imagetext : {
-    fontSize : 15,
-    color : "blue",
-    fontWeight : "700",
-
-  },
-  button: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-    borderRadius: 10,
-    width : '100%',
-    marginTop : 15,
-    borderWidth : 2,
-    borderColor : 'black'
-  },
-
-  title1: {
-    fontSize: 25,
-    fontWeight : "bold",
-    
-  },
-
-});
-
-export default Home;
+    buttonGroup : {
+      flex: 1, 
+      height: 200, 
+      borderWidth: 1,
+      borderRadius : 15,
+      borderColor : 'white',
+      alignItems : 'center',
+      justifyContent : 'center',    
+      margin : 5,
+  
+    },
+    imagetext : {
+      fontSize : 15,
+      color : "blue",
+      fontWeight : "700",
+    },
+  
+    footer: {
+      height : '20%',
+      width : '100%',
+      //backgroundColor : '#fff',
+      alignItems : 'center',
+      alignContent : 'center',
+      marginTop : '5%',
+    },
+  
+  
+    title1: {
+      fontSize: 25,
+      fontWeight : "bold",
+      
+    },
+  
+  });
+  
+  export default Home;

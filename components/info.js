@@ -10,30 +10,86 @@ class info extends Component {
     constructor() {
         super();
         this.state = {
-            user_id : 'guest',
-            roomKey : ''
+            user_id : '',
+            guest_id : 'guest',
+            roomKey : '',
+            pet_id : '',
+            pet_name : '',
+            pet_age : '',
+            pet_kind : '',
+            pet_add : '',
+            data : []
         }
     }
 
+    pet_info = () => {
+
+      fetch('http://192.168.43.18/react/search_pet.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+
+          pet_id : this.state.user_id,
+  
+        })
+  
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          
+          this.setState({ data: responseJson });
+          this.getData(this.state.data);
+        }).catch((error) => {
+          console.error(error);
+        });
+  
+  
+    }
+
     componentDidMount() {
+      
+      this.pet_info();
+    }
+
+    componentWillMount(){
       this.test();
+    }
+  
+    
+    getData(data) {
+      this.setState({
+        pet_name : data[1],
+        pet_age : data[2],
+        pet_kind : data[3],
+        pet_add : data[4]
+
+      })
     }
 
     test = () => {
       if(this.props.navigation.state.params){
         const roomKey = this.props.navigation.state.params.roomKey;
-        this.setState({roomKey: roomKey});
+        const user_id = this.props.navigation.state.params.user_id;
+        this.setState({
+          roomKey: roomKey, 
+          user_id: user_id});
       }
     }
 
     test2 = () => {
       //Alert.alert(this.state.roomKey);
-      this.openMessages(this.state.roomKey, this.state.user_id)
+      this.openMessages(this.state.roomKey, this.state.guest_id)
+
+      //Alert.alert(this.state.data[1]);
     }
 
-    openMessages(roomKey, user_id) {
+
+
+    openMessages(roomKey, guest_id) {
       
-      this.props.navigation.navigate('Chat', {roomKey : roomKey, user_id : user_id});
+      this.props.navigation.navigate('Chat', {roomKey : roomKey, user_id : guest_id});
         
       
     }
@@ -47,12 +103,25 @@ class info extends Component {
             source = {require('../assets/b9a79e1bdc27f0dd1008fd2719aa2287.png')} ></Image>
             <Text>이름</Text>
             <TextInput
+            value = {this.state.pet_name}
+            editable ={false}
+            ></TextInput>
+            <Text>나이</Text>
+            <TextInput
+            value = {this.state.pet_age}
+            editable ={false}
+            ></TextInput>
+            <Text>견종 / 묘종</Text>
+            <TextInput
+            value = {this.state.pet_kind}
             editable ={false}
             ></TextInput>
             <Text>특징</Text>
             <TextInput
+            value = {this.state.pet_add}
             editable = {false}
-            multiline ={true}></TextInput>
+            multiline ={true}
+            ></TextInput>
         </View>
         <View style = {styles.footer}>
             <CustomButton
@@ -62,6 +131,7 @@ class info extends Component {
             onPress={this.test2}
             ></CustomButton>
         </View>
+        
         </View>
         );
     }
