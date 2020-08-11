@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import {Text, Image, View, Button, StyleSheet, Alert} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CustomButton from './CustomButton';
+import firebaseApp from './firebaseConfig';
 
 
 
 class info extends Component {
 
     constructor() {
+      
         super();
+        var storage = firebaseApp.storage();
+        var pathReference = storage.ref('userImages/slide_img_1.png');
         this.state = {
             user_id : '',
             guest_id : 'guest',
@@ -18,7 +22,8 @@ class info extends Component {
             pet_age : '',
             pet_kind : '',
             pet_add : '',
-            data : []
+            data : [],
+            uri : null
         }
     }
 
@@ -51,12 +56,20 @@ class info extends Component {
     componentDidMount() {
       
       this.pet_info();
+      this.getImage();
     }
 
-    componentWillMount(){
-      this.test();
+    UNSAFE_componentWillMount(){
+      this.getUser();
     }
-  
+    
+    getImage = () => {
+      const {user_id} = this.state;
+      let imgRef = firebaseApp.storage().ref('userImages/' + user_id);
+      imgRef.getDownloadURL().then((url) => {
+        this.setState({uri : url});
+      })
+    }
     
     getData(data) {
       this.setState({
@@ -68,7 +81,7 @@ class info extends Component {
       })
     }
 
-    test = () => {
+    getUser = () => {
       if(this.props.navigation.state.params){
         const roomKey = this.props.navigation.state.params.roomKey;
         const user_id = this.props.navigation.state.params.user_id;
@@ -76,16 +89,15 @@ class info extends Component {
           roomKey: roomKey, 
           user_id: user_id});
       }
+      
     }
-
-    test2 = () => {
+    
+    Chat = () => {
       //Alert.alert(this.state.roomKey);
       this.openMessages(this.state.roomKey, this.state.guest_id)
 
-      //Alert.alert(this.state.data[1]);
+
     }
-
-
 
     openMessages(roomKey, guest_id) {
       
@@ -100,7 +112,8 @@ class info extends Component {
         <View style ={styles.container}>
         <View style = {styles.content}>
             <Image
-            source = {require('../assets/b9a79e1bdc27f0dd1008fd2719aa2287.png')} ></Image>
+            style={{height: '50%', width:'100%', marginTop : '3.5%'}}
+            source = {{uri: this.state.uri}} ></Image>
             <Text>이름</Text>
             <TextInput
             value = {this.state.pet_name}
@@ -128,7 +141,7 @@ class info extends Component {
             buttonColor={'white'}
             titleColor = {'black'}
             title={'채팅하기'}
-            onPress={this.test2}
+            onPress={this.Chat}
             ></CustomButton>
         </View>
         

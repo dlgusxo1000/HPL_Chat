@@ -7,17 +7,19 @@ import firebaseApp from './firebaseConfig';
 
 class Login extends React.Component {
 
-  onPress1 = () =>
-   this.props.navigation.navigate('Signup');
 
   constructor(props) {
  
-    super(props)
+    super(props);
+
+    var firebaseDB = firebaseApp.database();
+    this.roomsRef = firebaseDB.ref('rooms');
  
     this.state = {
  
       user_id: '',
-      user_password: ''
+      user_password: '',
+      rooms: [],
  
     }
  
@@ -27,7 +29,38 @@ class Login extends React.Component {
     
     this.props.navigation.navigate('SignUp');
   }
- 
+
+  componentDidMount() {
+    this.listenForRooms(this.roomsRef);
+    
+  }
+
+  listenForRooms(roomsRef) {
+    roomsRef.on('value', (dataSnapshot) => {
+      var roomsFB = [];
+      dataSnapshot.forEach((child) => {
+        roomsFB.push({
+          name: child.val().name,
+          key: child.key
+        });
+      });
+      this.setState({ rooms: roomsFB });
+    });
+  }
+
+  addRoom() {
+
+    this.roomsRef.orderByChild('name').equalTo(this.state.user_id).once('value', snapshot => {
+      if(snapshot.exists()){
+        
+       
+      }
+      else {
+        this.roomsRef.push({ name: this.state.user_id });
+        
+      }
+    })
+  }
 
 
   async signIn() {
@@ -37,6 +70,7 @@ class Login extends React.Component {
       try {
         await firebaseApp.auth().signInWithEmailAndPassword(this.state.user_id, this.state.user_password);
         console.log(this.state.user_id + ' signed in');
+        this.addRoom();
         this.props.navigation.navigate('Home', { 
           user_id: this.state.user_id 
         });

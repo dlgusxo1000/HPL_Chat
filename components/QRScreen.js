@@ -40,10 +40,10 @@ class QRScreen extends React.Component {
     
   };
  
-  goInfo = () => {
+  /*goInfo = () => {
     this.props.navigation.navigate('info', {roomKey : this.state.roomKey, user_id : this.state.user_id});
   // Alert.alert(this.state.user_id);
-  }
+  }*/
 
   render() {
     return (
@@ -59,7 +59,7 @@ class QRScreen extends React.Component {
           fgColor='#FFFFFF'/>
 
         <TouchableOpacity 
-          onPress={this.goInfo}
+          onPress={this.getTextInputValue}
           activeOpacity={0.7}
           style={styles.button}>
           <Text style={styles.TextStyle}> QR코드 생성</Text>

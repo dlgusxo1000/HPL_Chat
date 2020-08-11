@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, TextInput, ImageBackground, Alert} from 'react-native';
+import {StyleSheet, Text, View, Image, TextInput, ImageBackground, Alert, TouchableOpacity} from 'react-native';
 import CustomButton2 from './CustomButton2';
-import ImageLoad from './ImageLoad';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import firebaseApp from './firebaseConfig';
+
 
  class Pet extends Component {
 
@@ -14,13 +18,18 @@ import ImageLoad from './ImageLoad';
           name : '',
           age : '',
           kind : '',
-          add : ''         
+          add : '',
+          image: null,
+          data : null,       
+            
           
         }
         
       }
 
       componentDidMount() {
+
+        this.getPermissionAsync();
         if(this.props.navigation.state.params){
             const user_id = this.props.navigation.state.params.user_id;
             this.setState({user_id: user_id});
@@ -28,7 +37,58 @@ import ImageLoad from './ImageLoad';
       }
     }
 
+    getPermissionAsync = async () => {
+      if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+          alert('이 작업을 수행하려면 카메라 롤 권한이 필요합니다!');
+        }
+      }
+    };
+  
+    _pickImage = async () => {
+      try {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+        if (!result.cancelled) {
+          this.setState({ image: result.uri,});
+        }
+  
+        console.log(result);
+      } catch (E) {
+        console.log(E);
+      }
+    };
+
+    uploadImage = async (uri, userUID) => {
+
+      const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = () => {
+              resolve(xhr.response);
+          };
+          xhr.responseType = 'blob';
+          xhr.open('GET', uri, true);
+          xhr.send(null);
+      });
+  
+      const ref = firebaseApp
+          .storage()
+          .ref()
+          .child(`userImages/${userUID}`);
+  
+      let snapshot = await ref.put(blob);
+  
+      return await snapshot.ref.getDownloadURL();
+  };
+
     pet_info = () => {
+
+      this.uploadImage(this.state.image, this.state.user_id);
 
         fetch('http://192.168.43.18/react/pet_information.php', {
           method: 'POST',
@@ -58,11 +118,15 @@ import ImageLoad from './ImageLoad';
             console.error(error);
           });
     
-    
+          
       }
+
+     
 
 
   render() {
+    let { image } = this.state;
+
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -70,13 +134,18 @@ import ImageLoad from './ImageLoad';
               source = {require("./Photo/petback2.png")}>
         <View style={styles.header} />
 
-        <View style={styles.title}>
-          <Text style={{fontSize:35}}>Pet Impomation</Text>
-          <View style={{width:"100%",borderBottomWidth:0.5,borderColor:'#444'}} />
-        </View>
+        
 
         <View style = {styles.petimage}>
-            <ImageLoad></ImageLoad>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {image && <Image source={{ uri: image }} style={{ width: 300, height: 200 }} />}
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress = {this._pickImage}>
+            <Text style = {styles.text}>사진 불러오기</Text>
+        </TouchableOpacity >
+        
+      </View>
         </View>
 
         <View style={styles.content}>
@@ -169,6 +238,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  text : {
+    fontSize: 15,
+    fontWeight : "300",
+  },
+  button : {
+    marginTop : 10,
+    marginBottom : 5,
+    borderColor: '#aaa', 
+    height:35, 
+    borderWidth: 1, 
+    borderRadius: 5, 
+    padding:5
+  },
+
   header: {
     width:'100%',
     height:'-5%',

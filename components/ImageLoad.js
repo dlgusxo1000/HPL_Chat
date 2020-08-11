@@ -6,6 +6,7 @@ import * as Permissions from 'expo-permissions';
 
 export default class ImageLoad extends React.Component {
   state = {
+    data : '',
     image: null,
   };
 
@@ -47,7 +48,7 @@ export default class ImageLoad extends React.Component {
         quality: 1,
       });
       if (!result.cancelled) {
-        this.setState({ image: result.uri });
+        this.setState({ image: result.uri, data : result.data});
       }
 
       console.log(result);

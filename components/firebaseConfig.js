@@ -6,7 +6,7 @@ const firebaseConfig = {
           authDomain: 'hpl-chat-d2cb8.firebaseapp.com',
           databaseURL: 'https://hpl-chat-d2cb8.firebaseio.com',
           projectId: 'hpl-chat-d2cb8',
-          storageBucket: '',
+          storageBucket: 'hpl-chat-d2cb8.appspot.com',
           messagingSenderId: '835705626993',
           appID: "HPLCHAT",
 };

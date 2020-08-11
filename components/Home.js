@@ -56,9 +56,7 @@ class Home extends React.Component {
 
 
   addRoom() {
-    
-    //this._getName();
-    //Alert.alert(this.state.user_id);
+
     this.roomsRef.orderByChild('name').equalTo(this.state.user_id).once('value', snapshot => {
       if(snapshot.exists()){
         
@@ -70,9 +68,6 @@ class Home extends React.Component {
         
       }
     })
-    
-    
-    
   }
 
   openMessages(rooms, user_id) {
@@ -146,7 +141,9 @@ class Home extends React.Component {
   
           <View style={{flex: 1, flexDirection: 'row'}}>
   
-            <TouchableOpacity onPress={this.onPress4} style={styles.buttonGroup}>
+            <TouchableOpacity 
+            onPress={this.onPress4} 
+            style={styles.buttonGroup}>
               <View>
                 <Icon name="bell" size={75} color="white" /> 
                 <Text style={styles.imagetext}>Push 알림</Text>
@@ -154,7 +151,9 @@ class Home extends React.Component {
               </View>
             </TouchableOpacity>
   
-            <TouchableOpacity onPress={() => this.addRoom()} style = {styles.buttonGroup}>
+            <TouchableOpacity 
+            onPress={() => this.addRoom()} 
+            style = {styles.buttonGroup}>
               <View >
                 <Icon name="comment" size={75} color="white" /> 
                 <Text style={styles.imagetext}>채팅방 생성</Text>
