@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Text, Image, View, Button, StyleSheet, Alert} from 'react-native';
+import {Text, Image, View, Button, StyleSheet, Alert, Keyboard} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CustomButton from './CustomButton';
 import firebaseApp from './firebaseConfig';
@@ -11,8 +11,8 @@ class info extends Component {
     constructor() {
       
         super();
-        var storage = firebaseApp.storage();
-        var pathReference = storage.ref('userImages/slide_img_1.png');
+        var firebaseDB = firebaseApp.database();
+        this.roomsRef = firebaseDB.ref('rooms');
         this.state = {
             user_id : '',
             guest_id : 'guest',
@@ -84,19 +84,27 @@ class info extends Component {
     getUser = () => {
       if(this.props.navigation.state.params){
         const roomKey = this.props.navigation.state.params.roomKey;
-        const user_id = this.props.navigation.state.params.user_id;
-        this.setState({
-          roomKey: roomKey, 
-          user_id: user_id});
-      }
+        this.setState({ roomKey : roomKey});
+
+        let keyRef = firebaseApp.database().ref('rooms/' + roomKey);
+        keyRef.on('value', (snap) => {
+          var user_id = snap.val().name;
+          console.log(snap.val().name);
+          this.setState({
+            user_id : user_id
+          })
+          
+        })
       
+           
+      }      
     }
     
     Chat = () => {
-      //Alert.alert(this.state.roomKey);
+      
       this.openMessages(this.state.roomKey, this.state.guest_id)
 
-
+  
     }
 
     openMessages(roomKey, guest_id) {

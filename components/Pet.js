@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TextInput, ImageBackground, Alert, TouchableOpacity} from 'react-native';
-import CustomButton2 from './CustomButton2';
+import PetButton from './PetButton';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import firebaseApp from './firebaseConfig';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
  class Pet extends Component {
@@ -131,9 +132,13 @@ import firebaseApp from './firebaseConfig';
       <View style={styles.container}>
         <ImageBackground
               style = {{ width: "100%", height: "100%" }}
-              source = {require("./Photo/petback2.png")}>
+              source = {require("./Photo/PBGradetion.png")}>
         <View style={styles.header} />
-
+        <View style={styles.title}>
+          <Text style={{fontSize:35}}>Pet Impomation</Text>
+          <View style={{width:"100%",borderBottomWidth:0.5,borderColor:'#444'}} />
+        </View>
+        <KeyboardAwareScrollView>
         
 
         <View style = {styles.petimage}>
@@ -145,7 +150,7 @@ import firebaseApp from './firebaseConfig';
             <Text style = {styles.text}>사진 불러오기</Text>
         </TouchableOpacity >
         
-      </View>
+          </View>
         </View>
 
         <View style={styles.content}>
@@ -222,12 +227,13 @@ import firebaseApp from './firebaseConfig';
         </View>
         
         <View style={styles.footer}>
-          <CustomButton2
+          <PetButton
             buttonColor={'null'}
             titleColor = {'black'}
             title={'등록'}
             onPress={this.pet_info}/>
         </View>
+        </KeyboardAwareScrollView>
         </ImageBackground>
       </View>
     );

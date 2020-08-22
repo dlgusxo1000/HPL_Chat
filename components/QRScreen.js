@@ -10,7 +10,8 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    Text
+    Text,
+    Button
 } from 'react-native';
  
 class QRScreen extends React.Component {
@@ -39,11 +40,21 @@ class QRScreen extends React.Component {
     this.setState({ valueForQRCode: temt });
     
   };
- 
-  /*goInfo = () => {
-    this.props.navigation.navigate('info', {roomKey : this.state.roomKey, user_id : this.state.user_id});
-  // Alert.alert(this.state.user_id);
-  }*/
+
+  goinfo = () => {
+    this.props.navigation.navigate('info', {roomKey : this.state.roomKey});
+  }
+
+  renderButton = path => (
+    <Button
+      title={`Go to ${path}`}
+      onPress={() => {
+        const redirectUrl = Linking.makeUrl(path);
+        console.log("redirect", redirectUrl);
+        Linking.openURL(redirectUrl);
+      }}
+    />
+  );
 
   render() {
     return (
@@ -63,7 +74,10 @@ class QRScreen extends React.Component {
           activeOpacity={0.7}
           style={styles.button}>
           <Text style={styles.TextStyle}> QR코드 생성</Text>
+          
         </TouchableOpacity>
+        {this.renderButton("info/-MDTNNZYvs4MXLMc-1vi")}
+
       </View>
     );
   };

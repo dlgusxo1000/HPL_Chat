@@ -29,6 +29,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.listenForRooms(this.roomsRef);
+    
   }
 
   listenForRooms(roomsRef) {
@@ -133,7 +134,7 @@ class Home extends React.Component {
               style={styles.buttonGroup}>
               <View>
                 <Icon name="comments" size={75} color="white" /> 
-                <Text style={styles.imagetext}>채팅방 입장</Text>
+                <Text style={styles.imagetext}>펫 정보 입력</Text>
   
               </View>
             </TouchableOpacity>

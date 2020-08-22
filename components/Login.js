@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TextInput, Alert, ImageBackground} from 'react-native';
-import CustomButton from './CustomButton';
+import LoginButton from './LoginButton';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firebaseApp from './firebaseConfig';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
 class Login extends React.Component {
@@ -98,6 +99,7 @@ class Login extends React.Component {
         <ImageBackground
               style = {{ width: "100%", height: "100%" }}
               source = {require("./Photo/background7.jpg")}>
+                <KeyboardAwareScrollView>
           <View style={styles.header}>
             <Text style={styles.title}> 
               <Icon name="dog" size={35} color="white" />HPL
@@ -146,18 +148,19 @@ class Login extends React.Component {
           </View>
         </View>
         <View style={styles.footer}>
-          <CustomButton
+          <LoginButton
             buttonColor={'null'}
             titleColor = {'white'}
             title={'Login'}
             onPress={this.signIn.bind(this)}/>
-            <CustomButton
+            <LoginButton
             buttonColor={'null'}
             titleColor = {'white'}
             title={'Sign up'}
             onPress={this.goSignUp}
             />
         </View>
+        </KeyboardAwareScrollView>
         </ImageBackground>
       </View>
     );
@@ -189,10 +192,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: '10%',
     //backgroundColor: '#9aa9ff',
   },
   content: {
     flex :0.2 ,
+    marginTop : '10%',
     paddingLeft:10,
     paddingRight:10,
     paddingBottom:20,
@@ -204,6 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width:'100%',
     height:'20%',
+    marginTop : '10%',
     //backgroundColor: '#1ad657',
   },
   oror : {

@@ -7,9 +7,11 @@ import {
   TextInput, 
   Alert,
   ImageBackground} from 'react-native';
-import CustomButton from './CustomButton';
+import Singupbutton from './Singupbutton';
 import firebaseApp from './firebaseConfig';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 class SignUp extends Component {
 
@@ -54,7 +56,7 @@ class SignUp extends Component {
       }).then((response) => response.json())
         .then((responseJson) => {
           // Showing response message coming from server after inserting records.
-          Alert.alert(responseJson);
+          //Alert.alert(responseJson);
         }).catch((error) => {
           console.error(error);
         });
@@ -96,6 +98,7 @@ class SignUp extends Component {
           <ImageBackground
                 style = {{ width: "100%", height: "100%" }}
                 source = {require("./Photo/background7.jpg")}>
+                                  <KeyboardAwareScrollView>
             <View style={styles.header}>
               <Text style={styles.title}> 
                 <Icon name="dog" size={35} color="white" />HPL
@@ -202,12 +205,13 @@ class SignUp extends Component {
             </View>
           </View>
           <View style={styles.footer}>
-            <CustomButton
+            <Singupbutton
               buttonColor={'null'}
               titleColor = {'white'}
               title={'Sign up'}
               onPress={this.signUp.bind(this)}/>
           </View>
+          </KeyboardAwareScrollView>
           </ImageBackground>
         </View>
       );
@@ -241,17 +245,19 @@ class SignUp extends Component {
       justifyContent: 'center',
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop : '10%', 
       //backgroundColor: '#9aa9ff',
     },
     content: {
       flex :0.25 ,
       paddingLeft:10,
       paddingRight:10,
+      marginTop : '7%',
       paddingBottom:100,
     // backgroundColor: '#d6ca1a',
     },
     footer: {
-      flex : 0.25,
+      marginBottom : '45%',
       width:'100%',
       alignItems: 'center',
       justifyContent: 'center',
