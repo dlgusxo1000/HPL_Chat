@@ -8,15 +8,16 @@ import firebaseApp from './firebaseConfig';
 
 class info extends Component {
 
-    constructor() {
+    constructor(props) {
       
-        super();
+        super(props);
+
         var firebaseDB = firebaseApp.database();
         this.roomsRef = firebaseDB.ref('rooms');
         this.state = {
             user_id : '',
             guest_id : 'guest',
-            roomKey : '',
+            roomKey : this.props.navigation.state.params.roomKey,
             pet_id : '',
             pet_name : '',
             pet_age : '',
@@ -25,10 +26,12 @@ class info extends Component {
             data : [],
             uri : null
         }
+
+        this.pet_info = this.pet_info.bind(this);
     }
 
-    pet_info = () => {
-
+    pet_info = (user_id) => {
+     
       fetch('http://192.168.43.18/react/search_pet.php', {
         method: 'POST',
         headers: {
@@ -37,7 +40,7 @@ class info extends Component {
         },
         body: JSON.stringify({
 
-          pet_id : this.state.user_id,
+          pet_id : user_id,
   
         })
   
@@ -55,16 +58,13 @@ class info extends Component {
 
     componentDidMount() {
       
-      this.pet_info();
-      this.getImage();
+      
+      this.getUser();
+
     }
 
-    UNSAFE_componentWillMount(){
-      this.getUser();
-    }
-    
-    getImage = () => {
-      const {user_id} = this.state;
+    getImage = (user_id) => {
+      
       let imgRef = firebaseApp.storage().ref('userImages/' + user_id);
       imgRef.getDownloadURL().then((url) => {
         this.setState({uri : url});
@@ -81,23 +81,35 @@ class info extends Component {
       })
     }
 
-    getUser = () => {
-      if(this.props.navigation.state.params){
-        const roomKey = this.props.navigation.state.params.roomKey;
-        this.setState({ roomKey : roomKey});
-
-        let keyRef = firebaseApp.database().ref('rooms/' + roomKey);
-        keyRef.on('value', (snap) => {
-          var user_id = snap.val().name;
-          console.log(snap.val().name);
-          this.setState({
-            user_id : user_id
-          })
-          
-        })
+    getUser(){
       
-           
-      }      
+        const {roomKey} = this.state;  
+        
+
+        fetch('http://192.168.43.18/react/search_user.php', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+  
+            roomKey : roomKey
+    
+          })
+    
+        }).then((response) => response.json())
+          .then((responseJson) => {
+            
+            
+            this.pet_info(responseJson);
+            this.getImage(responseJson);
+
+          }).catch((error) => {
+            console.error(error);
+          });
+          
+            
     }
     
     Chat = () => {

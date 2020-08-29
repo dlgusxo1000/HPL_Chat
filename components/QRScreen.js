@@ -42,7 +42,8 @@ class QRScreen extends React.Component {
   };
 
   goinfo = () => {
-    this.props.navigation.navigate('info', {roomKey : this.state.roomKey});
+   // Alert.alert(this.state.roomKey);
+    this.props.navigation.navigate('info', {roomKey : this.state.roomKey, user_id : this.state.user_id});
   }
 
   renderButton = path => (
@@ -76,7 +77,7 @@ class QRScreen extends React.Component {
           <Text style={styles.TextStyle}> QR코드 생성</Text>
           
         </TouchableOpacity>
-        {this.renderButton("info/-MDTNNZYvs4MXLMc-1vi")}
+        {this.renderButton("info/-MFZuESC8emIXRXBI4_n")}
 
       </View>
     );

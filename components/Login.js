@@ -54,13 +54,48 @@ class Login extends React.Component {
     this.roomsRef.orderByChild('name').equalTo(this.state.user_id).once('value', snapshot => {
       if(snapshot.exists()){
         
-       
       }
       else {
         this.roomsRef.push({ name: this.state.user_id });
         
+        this.checkRoomkey(this.state.rooms, this.state.user_id);
       }
     })
+  }
+
+  checkRoomkey(rooms, user_id){
+
+    for(var i in rooms) {
+      if(user_id == rooms[i].name){
+        console.log(rooms[i].key);
+        this.pushRoomkey(rooms[i].key);
+      }
+    }
+  }
+
+  pushRoomkey = (roomKey) => {
+    //Alert.alert(this.state.user_id);
+    fetch('http://192.168.43.18/react/pushRoomkey.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+
+          roomKey : roomKey,
+          user_id : this.state.user_id
+
+        })
+
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          // Showing response message coming from server after inserting records.
+         Alert.alert(responseJson);
+        }).catch((error) => {
+          console.error(error);
+        });
+
   }
 
 
