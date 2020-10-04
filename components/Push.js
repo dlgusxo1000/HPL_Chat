@@ -11,138 +11,93 @@ import {
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
-const PUSH_REGISTRATION_ENDPOINT = 'http://8ed2511faddc.ngrok.io/token';
-const MESSAGE_ENPOINT = 'http://8ed2511faddc.ngrok.io/message';
+const PUSH_REGISTRATION_ENDPOINT = 'http://876145a476df.ngrok.io/token';
+const MESSAGE_ENPOINT = 'http://876145a476df.ngrok.io/message';
 
 export default class Push extends React.Component {
-  constructor(props) {
- 
-    super(props)
- 
-    this.state = {
- 
-      notification: null,
-      messageText: '',
-      adress: ''
- 
+  state = {
+    notification: null,
+    messageText: ''
+  }
+
+  handleNotification = (notification) => {
+    this.setState({ notification });
+  }
+
+  handleChangeText = () => {
+    this.setState({ messageText: text });
+    this.sendMessage();
+  }
+
+  sendMessage = async () => {
+    fetch(MESSAGE_ENPOINT, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: this.state.messageText,
+      }),
+    });
+    this.setState({ messageText: '' });
+  }
+
+  registerForPushNotificationsAsync = async () => {
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    if (status !== 'granted') {
+      return;
     }
- 
+    let token = await Notifications.getExpoPushTokenAsync();
+    return fetch(PUSH_REGISTRATION_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: {
+          value: token,
+        },
+        user: {
+          username: 'warly',
+          name: 'Dan Ward'
+        },
+      }),
+    });
+
+    this.notificationSubscription = Notifications.addListener(this.handleNotification);
   }
 
- // Defined in following steps
-
- registerForPushNotificationsAsync = async () => {
-  const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-  if (status !== 'granted') {
-    return;
+  componentDidMount() {
+    this.registerForPushNotificationsAsync();
   }
-  let token = await Notifications.getExpoPushTokenAsync();
-  // Defined in following steps
-  return fetch(PUSH_REGISTRATION_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      token: {
-        value: token,
-      },
-      user: {
-        username: 'warly',
-        name: 'Dan Ward'
-      },
-    }),
-  });
 
-   this.notificationSubscription = Notifications.addListener(this.handleNotification);
-}
-handleNotification = (notification) => {
-  this.setState({ notification });
-}
+  renderNotification() {
+    return(
+      <View style={styles.container}>
+        <Text style={styles.label}>A new message was recieved!</Text>
+        <Text>{this.state.notification.data.message}</Text>
+      </View>
+    )
+  }
 
-componentDidMount() {
-  this.registerForPushNotificationsAsync();
-}
-
-handleChangeText = (text) => {
-  this.setState({ 
-    messageText: text,
-    
-  });
-}
-
-/*sendMessage = async () => {
-  fetch(MESSAGE_ENPOINT, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      message: this.state.messageText,
-    }),
-  });
-  this.setState({ messageText: '' });
-}*/
-
-checkAddress = () => {
-
-  const { adress }  = this.state ;
-  
- fetch('http://192.168.43.18/react/push_notification.php', {
-  method: 'POST',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
- 
-    user_adress: adress
- 
-  })
- 
-}).then((response) => response.json())
-      .then((responseJson) => {
+  render() {
+    return (
+      <View style={styles.container}>
         
-        if(responseJson === 'Data Matched')
-        {
-          Alert.alert('로그인 성공');
-
-        }
-        else{
-          Alert.alert(responseJson);
-        }
-      }).catch((error) => {
-        console.error(error);
-      });
- 
- 
- 
-}
-
-render() {
-  return (
-    <View style={styles.container}>
-      <TextInput
-        //value={this.state.messageText}
-        
-        onChangeText={adress => this.setState({adress})}
-        style={styles.textInput}
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={this.checkAddress}
-      >
-        <Text style={styles.buttonText}>Send</Text>
-      </TouchableOpacity>
-      {this.state.notification ?
-        this.renderNotification()
-      : null}
-    </View>
-  );
-}
-
+        <TouchableOpacity
+          style={styles.button}
+          onPress={this.handleChangeText}
+        >
+          <Text style={styles.buttonText}>Send</Text>
+        </TouchableOpacity>
+        {this.state.notification ?
+          this.renderNotification()
+        : null}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

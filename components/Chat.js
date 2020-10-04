@@ -64,6 +64,7 @@ class Chat extends Component {
   componentDidMount() {
     this.observeAuth();
     this.listenForMessages(this.messagesRef);
+    
   }
 
   listenForMessages(messagesRef) {

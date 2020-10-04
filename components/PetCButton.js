@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export default class PetButton extends Component{
+export default class CustomButton extends Component{
   static defaultProps = {
     title: '빈칸',
     buttonColor: 'white',
@@ -36,12 +36,13 @@ export default class PetButton extends Component{
 const styles = StyleSheet.create({
   button: {
 
-    justifyContent: 'center',
+    alignContent : 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginTop : 0,
+    marginBottom: '10%',
     borderRadius: 15,
-    width : '80%',
+    width : '60%',
     height : '100%',
     //marginTop : -20,
     borderWidth : 1.5,
@@ -49,8 +50,8 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 25,
     fontWeight : "bold",
-    
+    marginBottom: '10%',
   },
 });

@@ -1,255 +1,47 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet, 
-  Text, 
-  View, 
-  Image, 
-  TextInput, 
-  Alert,
-  ImageBackground} from 'react-native';
-import CustomButton from './CustomButton';
-import firebaseApp from './firebaseConfig';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-
-class SignUp extends Component {
-
-  
-    constructor(props) {
-      super(props)
-  
-      this.state = {
-        id: '',
-        password: '',
-        name: '',
-        address: '',
-        phone: ''
-      }
-    }
-
-  registration_Function = () => {
-
-    fetch('http://192.168.43.18/react/registration_api.php', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-
-        user_id: this.state.id,
-
-        user_name: this.state.name,
-
-        user_address: this.state.address,
-        
-        user_phone: this.state.phone 
-
-      })
-
-    }).then((response) => response.json())
-      .then((responseJson) => {
-        // Showing response message coming from server after inserting records.
-        Alert.alert(responseJson);
-      }).catch((error) => {
-        console.error(error);
-      });
-
-
-  }
-
-  async signUp() {
-    if (this.state.id != '' && this.state.password != '') {
-      try {
-        await firebaseApp.auth().createUserWithEmailAndPassword(this.state.id, this.state.password);
-        console.log(this.state.id + ' signed up');
-        this.props.navigation.navigate('Login');
-
-        this.registration_Function();
-      } catch(error) {
-        console.log(error.toString());
-        Alert.alert(error.toString());
-      }
-    }
-    else {
-      Alert.alert(
-        'Invalid Sign Up',
-        'The Email and Password fields cannot be blank.',
-        [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ],
-        { cancelable: false }
-      )
+import React, { Component } from 'react';
+import { StyleSheet, Text, View, Image, Button, Platform } from 'react-native';
+import { captureScreen } from "react-native-view-shot";
+export default class App extends Component {
+  constructor(){
+    super();
+    this.state={
+      //initial image to the <Image>
+      imageURI : 'https://raw.githubusercontent.com/AboutReact/sampleresource/master/sample_img.png'
     }
   }
-
-
-
+  takeScreenShot=()=>{
+    //handler to take screnshot
+    captureScreen({
+      //either png or jpg or webm (Android). Defaults to png
+      format: "jpg",
+      //quality 0.0 - 1.0 (default). (only available on lossy formats like jpg)
+      quality: 0.8
+    })
+    .then(
+      //callback function to get the result URL of the screnshot
+      uri => this.setState({ imageURI : uri }),
+      error => console.error("Oops, Something Went Wrong", error)
+    );
+  }
   render() {
     return (
-      <View style={styles.container}>
-         <ImageBackground
-              style = {{ width: "100%", height: "100%" }}
-              source = {require("./background7.jpg")}>
-          <View style={styles.header}>
-            <Text style={styles.title}> 
-              <Icon name="dog" size={35} color="white" />HPL
-            </Text>
-          </View>   
-        <View style={styles.login}>
-          <Text style={{fontSize:32,
-                        paddingBottom:20,
-                        color : 'white'}}><Icon name="user-plus" size={35} color="white" />Sing Up</Text>
-          {/*<View style={{width:"100%",
-                        borderBottomWidth:0.5,
-          borderColor:'white'}} />*/}
-        </View>
-        <View style={styles.content}>
-          <View style={{flexDirection:'row',
-                        justifyContent:'space-between',
-                        alignItems:'center',
-                        paddingBottom:10}}>
-            <Text style={{fontSize:20,
-                          color : 'white',
-                          fontWeight : "bold"}}>ID</Text>
-            <TextInput 
-              style={{borderColor: '#aaa',
-                      width:'70%',
-                      height:35, 
-                      borderWidth: 2,
-                      borderRadius: 10, 
-                      borderColor : 'white',
-                      padding:5}}
-              onChangeText={data => this.setState({ id: data})}
-            />
-          </View>
-          <View style={{flexDirection:'row',
-                        justifyContent:'space-between',
-                        alignItems:'center',
-                        paddingBottom:10}}>
-            <Text style={{fontSize:20,
-                          color : 'white',
-                          fontWeight : "bold"}}>Password</Text>
-            <TextInput 
-              style={{borderColor: '#aaa', 
-                      width:'70%', 
-                      height:35, 
-                      borderWidth: 2, 
-                      borderRadius: 10, 
-                      borderColor : 'white',
-                      padding:5}}
-              onChangeText={data => this.setState({password : data})}
-            />
-          </View>
-          <View style={{flexDirection:'row',
-                        justifyContent:'space-between',
-                        alignItems:'center',
-                        paddingBottom:10}}>
-            <Text style={{fontSize:20,
-                          color : 'white',
-                          fontWeight : "bold"}}>Name</Text>
-            <TextInput 
-              style={{borderColor: '#aaa', 
-                      width:'70%', 
-                      height:35, 
-                      borderWidth: 2, 
-                      borderRadius: 10, 
-                      borderColor : 'white',
-                      padding:5}}
-              onChangeText={data => this.setState({name : data})}
-            />
-          </View>
-          <View style={{flexDirection:'row',
-                        justifyContent:'space-between',
-                        alignItems:'center',
-                        paddingBottom:10}}>
-            <Text style={{fontSize:20,
-                          color : 'white',
-                          fontWeight : "bold"}}>Address</Text>
-            <TextInput 
-              style={{borderColor: '#aaa', 
-                      width:'70%',
-                      height:35,
-                      borderWidth: 2, 
-                      borderRadius: 10, 
-                      borderColor : 'white',
-                      padding:5}}
-              onChangeText={data => this.setState({adress : data})}
-            />
-          </View>
-          <View style={{flexDirection:'row',
-                        justifyContent:'space-between',
-                        alignItems:'center',
-                        paddingBottom:10}}>
-            <Text style={{fontSize:20,
-                          color : 'white',
-                          fontWeight : "bold"}}>Phone</Text>
-            <TextInput 
-              style={{borderColor: '#aaa', 
-                      width:'70%',
-                      height:35,
-                      borderWidth: 2, 
-                      borderRadius: 10, 
-                      borderColor : 'white',
-                      padding:5}}
-              onChangeText={data => this.setState({phone : data})}
-            />
-          </View>
-        </View>
-        <View style={styles.footer}>
-          <CustomButton
-            buttonColor={'null'}
-            titleColor = {'white'}
-            title={'Sign up'}
-            onPress={this.signUp.bind(this)}/>
-        </View>
-        </ImageBackground>
+      <View style={styles.MainContainer}>
+          <Text style={{fontSize:20}}>Click on Button Below to Take ScreenShot</Text>
+          <Image 
+              source={{uri : this.state.imageURI}} 
+              style={{width: 200, height: 300, resizeMode: 'contain', marginTop: 5}} />
+          <Button title="Take Screenshot" onPress={this.takeScreenShot} />
       </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
-  container: {
+  MainContainer: {
     flex: 1,
-    //padding : 10,
-    backgroundColor: 'white',
-  },
-  header: {
-    height : '10%',
-   // backgroundColor: '#fff',
-    alignItems: 'center',
-    alignContent : 'center',
-    marginBottom : '5%',
-  }, 
-  title : {
-    fontSize : 35,
-    fontWeight : "700",
-    color : "white",
-    marginTop : '6%',
-    //marginLeft : '-3%',
-  },
-  login: {
-    flex : 0.25,
-    width:'100%',
-    height:'18%',
     justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
-    //backgroundColor: '#9aa9ff',
-  },
-  content: {
-    flex :0.25 ,
-    paddingLeft:10,
-    paddingRight:10,
-    paddingBottom:100,
-   // backgroundColor: '#d6ca1a',
-  },
-  footer: {
-    flex : 0.25,
-    width:'100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    //backgroundColor: '#1ad657',
-  },
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#000',
+  }
 });
-export default SignUp;

@@ -6,10 +6,11 @@ import {
   Image, 
   ImageBackground,
   TouchableOpacity, 
-  Alert } from 'react-native';
+  Alert, 
+  BackHandler,
+  ToastAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firebaseApp from './firebaseConfig';
-
 
 
 class Home extends React.Component {
@@ -18,6 +19,7 @@ class Home extends React.Component {
     super(props);
     var firebaseDB = firebaseApp.database();
     this.roomsRef = firebaseDB.ref('rooms');
+    
     this.state = {
       rooms: [],
       user_id : this.props.navigation.state.params.user_id,
@@ -25,11 +27,36 @@ class Home extends React.Component {
       
     }
     this.openMessages = this.openMessages.bind(this);
+    
+  }
+
+  componentWillUnmount(){
+    this.exitApp = false;
+    BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton);
   }
 
   componentDidMount() {
     this.listenForRooms(this.roomsRef);
-    
+    BackHandler.addEventListener('hardwareBackPress',this.handleBackButton);
+  }
+
+  handleBackButton = () =>{
+    if(this.exitApp == undefined || !this.exitApp){
+      ToastAndroid.show('한번 더 누르시면 종료됩니다.',ToastAndroid.SHORT);
+      this.exitApp = true;
+
+      this.timeout = setTimeout(
+        ()=> {
+          this.exitApp = false;
+        },
+        2000
+      );
+    } else {
+      clearTimeout(this.timeout);
+
+      BackHandler.exitApp();
+    }
+    return true;
   }
 
   listenForRooms(roomsRef) {
@@ -108,9 +135,14 @@ class Home extends React.Component {
      this.props.navigation.navigate('Push');
 
      render(){
+      
+      const screenProps = {
+        user_id : this.state.user_id
+      }
 
       return (
         <View style={styles.container}>
+          
           <ImageBackground
                 style = {{ width: "100%", height: "100%" }}
                 source = {require("./Photo/background7.jpg")}>
@@ -134,7 +166,7 @@ class Home extends React.Component {
               style={styles.buttonGroup}>
               <View>
                 <Icon name="comments" size={75} color="white" /> 
-                <Text style={styles.imagetext}>펫 정보 입력</Text>
+                <Text style={styles.imagetext}>채팅방 입장</Text>
   
               </View>
             </TouchableOpacity>
@@ -164,6 +196,7 @@ class Home extends React.Component {
         </View>
           </ImageBackground>
         </View>
+        
       );
     }
   }

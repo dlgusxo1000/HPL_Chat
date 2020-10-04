@@ -1,33 +1,60 @@
-import Home from './Home';
-import Chat from './Chat';
+import React from 'react';
 import Login from './Login';
+import TabNavigator from './TabNavigator';
+import info from './info';
+import Pet from './Pet';
 import SignUp from './SignUp';
-import QRScreen from './QRScreen';
 import Push from './Push';
-import info from './info.js';
-import Pet from './Pet.js';
-
+import PetChange from './PetChange';
 
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { createSwitchNavigator} from 'react-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {View,Text} from 'react-native';
+import Setting from './Setting';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
 });
 
-
-const navigator = createStackNavigator({
-  
-  Login: { screen: Login},
-  Home: { screen: Home},
-  Chat: { screen: Chat},
-  SignUp: { screen: SignUp},
-  QRScreen: { screen: QRScreen},
-  Push: { screen: Push},
-  Pet: { screen : Pet},
-  info: { screen: info, path : "info/:roomKey"},
+const  AppStack = createStackNavigator({
+  Login : {
+    screen : Login,
+  },
+  SignUp : {
+    screen: SignUp,
+  },
+  Home : {
+    screen : TabNavigator
+  },
+  Pet : {
+    screen : Pet,
+  },
+  info : {
+    screen : info, path : "info/:roomKey"
+  },
+  Setting : {
+    screen : Setting
+  },
+  Push : {
+    screen : Push
+  },
+  PetChange : {
+    screen : PetChange
+  }
+},
+{
+  initialRouteName: "Login",
+  defaultNavigationOptions:{
+    headerLeft: ()=> <Icon name='font-awesome-logo-full' size= {20} style={{ paddingLeft:30}} color ={'rgb(161,175,210)'}/>,
+    headerTitle : ()=> (<View style={{alignItems: 'center',flex:1}}><Text style={{fontSize: 17, color: 'white'}}>HPL</Text></View>),
+    headerStyle : {backgroundColor: 'rgb(161,175,210)'},
+    headerRight:() => <Icon name='font-awesome-logo-full' size = {20}style={{ paddingRight:30}} color ={'rgb(161,175,210)'}/>,
+  }
 });
-const AppContainer = createAppContainer(navigator);
 
-export default AppContainer;
+const Navigator = createAppContainer(AppStack);
+
+export default Navigator;

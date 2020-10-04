@@ -3,7 +3,7 @@ import {Text, Image, View, Button, StyleSheet, Alert, Keyboard} from 'react-nati
 import { TextInput } from 'react-native-gesture-handler';
 import CustomButton from './CustomButton';
 import firebaseApp from './firebaseConfig';
-
+import PetButton from './PetButton';
 
 
 class info extends Component {
@@ -52,8 +52,6 @@ class info extends Component {
         }).catch((error) => {
           console.error(error);
         });
-  
-  
     }
 
     componentDidMount() {
@@ -85,7 +83,6 @@ class info extends Component {
       
         const {roomKey} = this.state;  
         
-
         fetch('http://192.168.43.18/react/search_user.php', {
           method: 'POST',
           headers: {
@@ -126,78 +123,159 @@ class info extends Component {
       
     }
     
-    render(){
+    render() {
+      return (
+        <View style={styles.container}>
+            <View style={styles.header}></View>
+          <Image style={styles.avatar} 
+                 source={{uri: this.state.uri}} >  
+          </Image>
+          <View style={styles.body}>
+            <View style={styles.bodyContent}>
+              <View style={{ paddingBottom:'0.2%',
+                              paddingTop : '3%',}}>
+                  <Text style={{fontSize:13,
+                                  color : 'gray',
+                                  fontWeight : "bold"}}>이름</Text>
+              </View>
+              <View style={{ paddingBottom: '0.1%'}}>
+                  <TextInput style = {{ fontSize : 20,
+                                      color : 'black',
+                                      fontWeight : '700'}}
+                             value = {this.state.pet_name}
+                             editable ={false}></TextInput>
+              </View>
+  
+              <View style = {{borderWidth : 0.4,
+                              borderColor : 'gray',
+                              width : '90%',
+                              paddingBottom : 0,}}>
+              </View>
+  
+              <View style={{ paddingBottom:'0.2%',
+                              paddingTop : '3%',}}>
+                  <Text style={{fontSize:13,
+                                  color : 'gray',
+                                  fontWeight : "bold"}}>나이</Text>
+              </View>
+  
+              <View style={{ paddingBottom:'0.1%'}}>
+                  <TextInput style = {{ fontSize : 20,
+                                      color : 'black',
+                                      fontWeight : '700'}}
+                             value = {this.state.pet_age}
+                             editable ={false}></TextInput>
+              </View>
+  
+              <View style = {{borderWidth : 0.4,
+                              borderColor : 'gray',
+                              width : '90%',
+                              paddingBottom : 0,}}>
+              </View>
+  
+              <View style={{ paddingBottom:'0.2%',
+                              paddingTop : '3%'}}>
+                  <Text style={{fontSize:13,
+                                  color : 'gray',
+                                  fontWeight : "bold"}}>견종 / 묘종</Text>
+                  </View>
+              <View style={{ paddingBottom:'0.1%'}}>
+                  <TextInput style = {{ fontSize : 20,
+                                      color : 'black',
+                                      fontWeight : '700'}}
+                             value = {this.state.pet_kind}
+                             editable ={false}></TextInput>
+              </View>
+  
+              <View style = {{borderWidth : 0.4,
+                              borderColor : 'gray',
+                              width : '90%',
+                              paddingBottom : 0,}}>
+              </View>
+  
+              <View style={{ paddingBottom:'0.2%',
+                              paddingTop : '3%'}}>
+                  <Text style={{fontSize:13,
+                                  color : 'gray',
+                                  fontWeight : "bold"}}>특징</Text>
+              </View>
+  
+              <View style = {{borderWidth : 0.4,
+                              borderColor : 'gray',
+                              width : '90%',
+                              paddingBottom : 72,}}>
+                      
+                      <TextInput style = {{ fontSize : 15,
+                                      color : 'black',
+                                      fontWeight : '700'}}
+                                 value = {this.state.pet_add}
+                                 editable ={false}></TextInput>
+                    
+              </View>
+             </View>
 
-        return(
-        <View style ={styles.container}>
-        <View style = {styles.content}>
-            <Image
-            style={{height: '50%', width:'100%', marginTop : '3.5%'}}
-            source = {{uri: this.state.uri}} ></Image>
-            <Text>이름</Text>
-            <TextInput
-            value = {this.state.pet_name}
-            editable ={false}
-            ></TextInput>
-            <Text>나이</Text>
-            <TextInput
-            value = {this.state.pet_age}
-            editable ={false}
-            ></TextInput>
-            <Text>견종 / 묘종</Text>
-            <TextInput
-            value = {this.state.pet_kind}
-            editable ={false}
-            ></TextInput>
-            <Text>특징</Text>
-            <TextInput
-            value = {this.state.pet_add}
-            editable = {false}
-            multiline ={true}
-            ></TextInput>
+          </View>
+          <View style = {styles.footer}>
+            <PetButton
+                buttonColor={'null'}
+                titleColor = {'black'}
+                title={'주인과 채팅하기'}
+                onPress = {this.Chat}>   
+            </PetButton>
+          </View>
         </View>
-        <View style = {styles.footer}>
-            <CustomButton
-            buttonColor={'white'}
-            titleColor = {'black'}
-            title={'채팅하기'}
-            onPress={this.Chat}
-            ></CustomButton>
-        </View>
-        
-        </View>
-        );
+      );
     }
-}
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 10,
-      backgroundColor: 'white',
+  }
+  
+  const styles = StyleSheet.create({
+    header:{
+      backgroundColor: "rgb(161,175,210)",
+      height:200,
+      
     },
-    header: {
-      width:'100%',
-      height:'5%',
-      //backgroundColor: '#ff9a9a',
+    container : {
+      flex :1,
     },
-    title: {
-      width:'100%',
-      height:'18%',
-      justifyContent: 'center',
-      //backgroundColor: '#9aa9ff',
+    avatar: {
+      width: 180,
+      height: 180,
+      borderRadius: 63,
+      borderWidth: 4,
+      borderColor: "white",
+      marginBottom:10,
+      alignSelf:'center',
+      position: 'absolute',
+      marginTop:10
     },
-    content: {
-      //flex :1 ,
-      paddingLeft:10,
+    font:{
+      color : "black",
+      fontSize : 40,
+      fontWeight : '700',
+    },
+    body:{
+      marginTop:20,
+    },
+    bodyContent: {
+      
+     // marginTop : '10%',
+      paddingLeft:25,
       paddingRight:10,
       paddingBottom:20,
-     // backgroundColor: '#d6ca1a',
     },
+    name:{
+      fontSize:28,
+      color: "#696969",
+      fontWeight: "600"
+    },
+  
     footer: {
-      width:'100%',
-      height:'10%',
+      marginLeft  : '40%',
+
+      height : 55,
+      width:'60%',
+  
       //backgroundColor: '#1ad657',
     },
   });
-export default info;
+  export default info;
