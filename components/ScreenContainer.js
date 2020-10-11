@@ -6,18 +6,22 @@ import Pet from './Pet';
 import SignUp from './SignUp';
 import Push from './Push';
 import PetChange from './PetChange';
+import Pet_mo_de from './Pet_mo_de';
+import Setting from './Setting';
 
 import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, HeaderBackButton  } from 'react-navigation-stack';
 import { createSwitchNavigator} from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {View,Text} from 'react-native';
-import Setting from './Setting';
+
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
 });
+
+
 
 const  AppStack = createStackNavigator({
   Login : {
@@ -36,14 +40,20 @@ const  AppStack = createStackNavigator({
     screen : info, path : "info/:roomKey"
   },
   Setting : {
-    screen : Setting
+    screen : Setting,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: (<HeaderBackButton onPress={() => navigation.navigate("Home")}/>)
+  })
   },
   Push : {
     screen : Push
   },
   PetChange : {
     screen : PetChange
-  }
+  },
+  Pet_mo_de : {
+    screen : Pet_mo_de
+  },
 },
 {
   initialRouteName: "Login",

@@ -68,7 +68,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
       }
     };
 
-    uploadImage = async (uri, userUID) => {
+    uploadImage = async (uri, userUID, temp) => {
+
+     
+      
+
       
       const blob = await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
@@ -79,13 +83,18 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
           xhr.open('GET', uri, true);
           xhr.send(null);
       });
+
+      
   
-      const ref = firebaseApp
+      let ref = firebaseApp
           .storage()
-          .ref()
-          .child(`userImages/${userUID}`);
-  
+          .ref(`images/${userUID}/${temp}.png`);
+
+          
+          
       let snapshot = await ref.put(blob);
+
+      Alert.alert('등록완료');
       
       return await snapshot.ref.getDownloadURL();
       
@@ -93,7 +102,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
     pet_info = () => {
 
-        this.uploadImage(this.state.image, this.state.user_id);
+        
         //this.setState({temp : this.state.user_id});
 
         fetch('http://192.168.43.18/react/pet_information.php', {
@@ -118,8 +127,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
     
         }).then((response) => response.json())
           .then((responseJson) => {
-            //this.setState({ temp : this.state.temp + responseJson});
-            //Alert.alert(this.state.temp);
+            this.setState({ temp : responseJson});
+            this.uploadImage(this.state.image, this.state.user_id, responseJson);
             
           }).catch((error) => {
             console.error(error);

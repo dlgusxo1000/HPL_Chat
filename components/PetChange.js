@@ -8,28 +8,32 @@ import firebaseApp from './firebaseConfig';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+
  class PetChange extends Component {
 
     constructor(props) {
         super(props);
         
+        var firebaseDB = firebaseApp.database();
+        this.roomsRef = firebaseDB.ref('rooms');
+
         this.state = {
          
-          user_id : '',
+          user_id : this.props.navigation.state.params.user_id,
+          pet_id : this.props.navigation.state.params.pet_id,
           name : '',
           age : '',
           kind : '',
           add : '',
           image: null,
           data : null,       
+          
             
           
         }
         
       }
-      test = () => {
-        Alert.alert('asdf')
-      }
+      
       componentDidMount() {
 
         this.getPermissionAsync();
@@ -37,7 +41,17 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
             const user_id = this.props.navigation.state.params.user_id;
             this.setState({user_id: user_id});
             
+            this.getImage(user_id);
       }
+    }
+
+    getImage = (user_id) => {
+
+        
+      let imgRef = firebaseApp.storage().ref(`images/${user_id}/${this.state.pet_id}.png`);;
+      imgRef.getDownloadURL().then((url) => {
+        this.setState({image : url});
+      })
     }
 
     getPermissionAsync = async () => {
@@ -81,19 +95,22 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
   
       const ref = firebaseApp
           .storage()
-          .ref()
-          .child(`userImages/${userUID}`);
+          .ref(`images/${userUID}/${this.state.pet_id}.png`);
   
       let snapshot = await ref.put(blob);
+
+      Alert.alert('수정 완료');
   
       return await snapshot.ref.getDownloadURL();
   };
 
     pet_info = () => {
 
+      
+
       this.uploadImage(this.state.image, this.state.user_id);
 
-        fetch('http://192.168.43.18/react/pet_information.php', {
+        fetch('http://192.168.43.18/react/pet_modify.php', {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -101,7 +118,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
           },
           body: JSON.stringify({
 
-            pet_id : this.state.user_id,
+            user_id : this.state.user_id,
+
+            pet_id : this.state.pet_id,
     
             pet_name : this.state.name,
     
@@ -115,8 +134,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
     
         }).then((response) => response.json())
           .then((responseJson) => {
-            // Showing response message coming from server after inserting records.
-            Alert.alert(responseJson);
+           
+            console.log(responseJson);
           }).catch((error) => {
             console.error(error);
           });
@@ -134,23 +153,15 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
       <View style={styles.container}>
 
         <View style={styles.header} >
-          <TouchableOpacity onPress = {this.test} style = {styles.allow_l} >
-            <View>
-            <Icon name='chevron-left' color = 'white' size = {35}  onPress = {this.test}/>
-            </View>
-          </TouchableOpacity>
+          
           <TouchableOpacity 
                     style={styles.avatar} 
                     onPress = {this._pickImage}>         
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              {image && <Image source={{ uri: image }} style={{ width: 180, height: 180, borderRadius : 63, }} />}
-            </View>
+              <Image source={{ uri: this.state.image }} style={{ width: 180, height: 180, borderRadius : 63, }} />
+                </View>
 
-          </TouchableOpacity >
-
-          <TouchableOpacity onPress = {this.test} style = {styles.allow_r}>
-              <Icon name='chevron-right' color = 'white' size = {35}  />
           </TouchableOpacity >
 
         </View>
@@ -233,18 +244,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
         </View>
         
         <View style={styles.footer}>
-            <View style = {styles.fbutton_l}>
+            <View style = {styles.fbutton}>
                 <PetCButton
                     buttonColor={'null'}
                     titleColor = {'black'}
                     title={'수정하기'}
-                    onPress={this.pet_info}/>
-            </View>
-            <View style = {styles.fbutton_r}>
-                <PetCButton
-                    buttonColor={'null'}
-                    titleColor = {'black'}
-                    title={'저장하기'}
                     onPress={this.pet_info}/>
             </View>
         </View>
@@ -328,7 +332,7 @@ const styles = StyleSheet.create({
    // backgroundColor: '#d6ca1a',
   },
   footer: {
-    flexDirection: 'row',
+
     marginTop : '7%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -337,20 +341,10 @@ const styles = StyleSheet.create({
     height:'15%',
     //backgroundColor: '#1ad657',
   },
-  fbutton_l : {
-      marginLeft : '5%',
-      flexDirection : 'row',
+  fbutton : {
       alignItems: 'center',
       justifyContent: 'center',
       alignContent : 'center',
   },
-  fbutton_r : {
-    marginRight : '5%',
-    flexDirection : 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignContent : 'center',
-},
 });
-
 export default PetChange;

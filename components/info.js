@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import {Text, Image, View, Button, StyleSheet, Alert, Keyboard} from 'react-native';
+import {Text, Image, View, Button, StyleSheet, Alert, Keyboard, TouchableOpacity} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CustomButton from './CustomButton';
 import firebaseApp from './firebaseConfig';
 import PetButton from './PetButton';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 
 class info extends Component {
@@ -18,20 +19,79 @@ class info extends Component {
             user_id : '',
             guest_id : 'guest',
             roomKey : this.props.navigation.state.params.roomKey,
-            pet_id : '',
+            pet_id : 1,
             pet_name : '',
             pet_age : '',
             pet_kind : '',
             pet_add : '',
-            data : [],
-            uri : null
+            data : null,
+            uri : null,
+            max : '',
+            min : 1,
+            image : '',
         }
 
         this.pet_info = this.pet_info.bind(this);
     }
 
-    pet_info = (user_id) => {
-     
+    left = () => {
+
+      this.pet_info_Test();
+
+      if(this.state.pet_id == 1) {
+       
+        this.setState({pet_id : this.state.max});
+
+        this.getImage(this.state.user_id);
+
+        this.pet_info(this.state.user_id, this.state.pet_id);
+
+      }
+
+      else {
+
+        
+        this.setState({pet_id : --this.state.pet_id});
+
+        this.getImage(this.state.user_id);
+
+        this.pet_info(this.state.user_id, this.state.pet_id);
+
+      }
+      
+    }
+
+    right = () => {
+
+      this.pet_info_Test();
+
+      if(this.state.pet_id == this.state.max) {
+
+        this.setState({pet_id : this.state.min});
+
+        
+        this.getImage(this.state.user_id);
+
+        this.pet_info(this.state.user_id, this.state.pet_id);
+
+      }
+
+      else {
+
+        
+        this.setState({pet_id : ++this.state.pet_id});
+
+        this.getImage(this.state.user_id);
+
+        this.pet_info(this.state.user_id, this.state.pet_id);
+      }
+      
+
+    }
+
+    pet_info = (user_id, pet_id) => {
+
+      
       fetch('http://192.168.43.18/react/search_pet.php', {
         method: 'POST',
         headers: {
@@ -40,7 +100,8 @@ class info extends Component {
         },
         body: JSON.stringify({
 
-          pet_id : user_id,
+          user_id : user_id,
+          pet_id : pet_id
   
         })
   
@@ -58,23 +119,53 @@ class info extends Component {
       
       
       this.getUser();
+      
 
+    }
+
+    pet_info_Test = () => {
+
+
+      fetch('http://192.168.43.18/react/Pet_id.php', {
+
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+
+          user_id : this.state.user_id,
+  
+        })
+  
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          
+          this.setState({max : parseInt(responseJson[0], 10)});
+
+        }).catch((error) => {
+          console.error(error);
+        });
     }
 
     getImage = (user_id) => {
+
       
-      let imgRef = firebaseApp.storage().ref('userImages/' + user_id);
+      let imgRef = firebaseApp.storage().ref(`images/${user_id}/${this.state.pet_id}.png`);;
       imgRef.getDownloadURL().then((url) => {
-        this.setState({uri : url});
+        this.setState({image : url});
       })
     }
     
-    getData(data) {
+    getData = (data) => {
+
       this.setState({
-        pet_name : data[1],
-        pet_age : data[2],
-        pet_kind : data[3],
-        pet_add : data[4]
+        
+        pet_name : data[3],
+        pet_age : data[4],
+        pet_kind : data[5],
+        pet_add : data[6]
 
       })
     }
@@ -98,8 +189,8 @@ class info extends Component {
         }).then((response) => response.json())
           .then((responseJson) => {
             
-            
-            this.pet_info(responseJson);
+            this.setState({ user_id : responseJson });
+            this.pet_info(responseJson, this.state.pet_id);
             this.getImage(responseJson);
 
           }).catch((error) => {
@@ -124,12 +215,26 @@ class info extends Component {
     }
     
     render() {
+
+      let { image } = this.state
+
       return (
         <View style={styles.container}>
-            <View style={styles.header}></View>
-          <Image style={styles.avatar} 
-                 source={{uri: this.state.uri}} >  
-          </Image>
+          <View style={styles.header} >
+            <TouchableOpacity onPress = {this.left} style = {styles.allow_l} >
+              <View>
+              <Icon name='chevron-left' color = 'white' size = {35}  onPress = {this.test}/>
+              </View>
+            </TouchableOpacity>
+            <Image style={styles.avatar} 
+                 source={image ? {uri: image } : null} >  
+            </Image>
+
+            <TouchableOpacity onPress = {this.right} style = {styles.allow_r}>
+                <Icon name='chevron-right' color = 'white' size = {35}  />
+            </TouchableOpacity >
+
+          </View>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
               <View style={{ paddingBottom:'0.2%',
@@ -247,6 +352,23 @@ class info extends Component {
       alignSelf:'center',
       position: 'absolute',
       marginTop:10
+    },
+    allow_l : {
+
+      position: 'absolute',
+      marginTop : '22%',
+      marginLeft : '10%',
+      //alignContent : 'center',
+      //alignSelf : 'center',
+      //justifyContent : 'center',
+    },
+    allow_r : {
+      position: 'absolute',
+      marginTop : '22%',
+      marginLeft : '83%',
+      //alignContent : 'center',
+      //alignSelf : 'center',
+      //justifyContent : 'center',
     },
     font:{
       color : "black",

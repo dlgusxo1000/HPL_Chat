@@ -11,8 +11,8 @@ import {
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
-const PUSH_REGISTRATION_ENDPOINT = 'http://876145a476df.ngrok.io/token';
-const MESSAGE_ENPOINT = 'http://876145a476df.ngrok.io/message';
+const PUSH_REGISTRATION_ENDPOINT = 'http://a3d00cd7a844.ngrok.io/token';
+const MESSAGE_ENPOINT = 'http://a3d00cd7a844.ngrok.io/message';
 
 export default class Push extends React.Component {
   state = {
@@ -25,7 +25,7 @@ export default class Push extends React.Component {
   }
 
   handleChangeText = () => {
-    this.setState({ messageText: text });
+    this.setState({ messageText: 'test' });
     this.sendMessage();
   }
 

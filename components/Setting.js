@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Alert, TouchableOpacity, ImageBackground} from 'react-native';
+import {StyleSheet, Text, View, Alert, TouchableOpacity, ImageBackground, BackHandler} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+
 
 class Setting extends React.Component {
 
     constructor(props) {
         super(props);
-       
+        
         this.state = {
         
           user_id : this.props.navigation.state.params.user_id,
@@ -15,14 +16,14 @@ class Setting extends React.Component {
     
       }
 
+      
+
     onPress = () =>
-    this.props.navigation.navigate('PetChange', {user_id : this.state.user_id});
+    this.props.navigation.navigate('Pet_mo_de', {user_id : this.state.user_id});
 
-
+   
+    
     render(){
-
-
-
         return(
             <View style={styles.container}>
                 <View style={styles.user}>

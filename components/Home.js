@@ -132,7 +132,7 @@ class Home extends React.Component {
      }
      
      onPress4 = () =>
-     this.props.navigation.navigate('Push');
+     this.props.navigation.navigate('Setting', {user_id : this.state.user_id});
 
      render(){
       

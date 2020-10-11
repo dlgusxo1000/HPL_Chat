@@ -1,223 +1,286 @@
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Text, View, Image, TextInput, ImageBackground, Alert, TouchableOpacity} from 'react-native';
+import PetCButton from './PetCButton';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
 import firebaseApp from './firebaseConfig';
-import PetButton from './PetButton';
-import { TextInput } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-class info extends Component {
-    constructor() {
+ class PetChange extends Component {
+
+    constructor(props) {
+        super(props);
         
-      super();
-      var storage = firebaseApp.storage();
-      var pathReference = storage.ref('userImages/slide_img_1.png');
-      this.state = {
+        this.state = {
+         
           user_id : '',
-          guest_id : 'guest',
-          roomKey : '',
-          pet_id : '',
-          pet_name : '',
-          pet_age : '',
-          pet_kind : '',
-          pet_add : '',
-          data : [],
-          uri : null
+          name : '',
+          age : '',
+          kind : '',
+          add : '',
+          image: null,
+          data : null,       
+            
+          
+        }
+        
+      }
+      test = () => {
+        Alert.alert('asdf')
+      }
+      componentDidMount() {
+
+        this.getPermissionAsync();
+        if(this.props.navigation.state.params){
+            const user_id = this.props.navigation.state.params.user_id;
+            this.setState({user_id: user_id});
+            
       }
     }
+
+    getPermissionAsync = async () => {
+      if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+          alert('이 작업을 수행하려면 카메라 롤 권한이 필요합니다!');
+        }
+      }
+    };
+  
+    _pickImage = async () => {
+      try {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [3, 3],
+          quality: 1,
+        });
+        if (!result.cancelled) {
+          this.setState({ image: result.uri,});
+        }
+  
+        console.log(result);
+      } catch (E) {
+        console.log(E);
+      }
+    };
+
+    uploadImage = async (uri, userUID) => {
+
+      const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = () => {
+              resolve(xhr.response);
+          };
+          xhr.responseType = 'blob';
+          xhr.open('GET', uri, true);
+          xhr.send(null);
+      });
+  
+      const ref = firebaseApp
+          .storage()
+          .ref()
+          .child(`userImages/${userUID}`);
+  
+      let snapshot = await ref.put(blob);
+  
+      return await snapshot.ref.getDownloadURL();
+  };
 
     pet_info = () => {
 
-      fetch('http://192.168.43.18/react/search_pet.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      this.uploadImage(this.state.image, this.state.user_id);
 
-          pet_id : this.state.user_id,
+        fetch('http://192.168.43.18/react/pet_information.php', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
 
-        })
-
-      }).then((response) => response.json())
-        .then((responseJson) => {
+            pet_id : this.state.user_id,
+    
+            pet_name : this.state.name,
+    
+            pet_age : this.state.age,
+    
+            pet_kind: this.state.kind,
+            
+            pet_add: this.state.add 
+    
+          })
+    
+        }).then((response) => response.json())
+          .then((responseJson) => {
+            // Showing response message coming from server after inserting records.
+            Alert.alert(responseJson);
+          }).catch((error) => {
+            console.error(error);
+          });
+    
           
-          this.setState({ data: responseJson });
-          this.getData(this.state.data);
-        }).catch((error) => {
-          console.error(error);
-        });
-
-
-    }
-
-    componentDidMount() {
-      
-      this.pet_info();
-      this.getImage();
-    }
-
-    UNSAFE_componentWillMount(){
-      this.getUser();
-    }
-
-    getImage = () => {
-      const {user_id} = this.state;
-      let imgRef = firebaseApp.storage().ref('userImages/' + user_id);
-      imgRef.getDownloadURL().then((url) => {
-        this.setState({uri : url});
-      })
-    }
-
-    getData(data) {
-      this.setState({
-        pet_name : data[1],
-        pet_age : data[2],
-        pet_kind : data[3],
-        pet_add : data[4]
-
-      })
-    }
-
-    getUser = () => {
-      if(this.props.navigation.state.params){
-        const roomKey = this.props.navigation.state.params.roomKey;
-        const user_id = this.props.navigation.state.params.user_id;
-        this.setState({
-          roomKey: roomKey, 
-          user_id: user_id});
       }
-      
-    }
 
-    Chat = () => {
-      //Alert.alert(this.state.roomKey);
-      this.openMessages(this.state.roomKey, this.state.guest_id)
+     
 
-
-    }
-
-    openMessages(roomKey, guest_id) {
-      
-      this.props.navigation.navigate('Chat', {roomKey : roomKey, user_id : guest_id});
-        
-      
-    }
 
   render() {
+    let { image } = this.state;
+
     return (
       <View style={styles.container}>
-          <View style={styles.header}></View>
-        <Image style={styles.avatar} 
-               source={{uri: this.state.uri}} >  
-        </Image>
-        <View style={styles.body}>
-          <View style={styles.bodyContent}>
-            <View style={{ paddingBottom:15,
-                            paddingTop : 20,}}>
-                <Text style={{fontSize:15,
-                                color : 'gray',
-                                fontWeight : "bold"}}>이름</Text>
+
+        <View style={styles.header} >
+          <TouchableOpacity onPress = {this.test} style = {styles.allow_l} >
+            <View>
+            <Icon name='chevron-left' color = 'white' size = {35}  onPress = {this.test}/>
             </View>
-            <View style={{ paddingBottom:35}}>
-                <TextInput style = {{ fontSize : 25,
-                                    color : 'black',
-                                    fontWeight : '700'}}
-                           value = {this.state.pet_name}
-                           editable ={false}></TextInput>
+          </TouchableOpacity>
+          <TouchableOpacity 
+                    style={styles.avatar} 
+                    onPress = {this._pickImage}>         
+
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+              {image && <Image source={{ uri: image }} style={{ width: 180, height: 180, borderRadius : 63, }} />}
             </View>
 
-            <View style = {{borderWidth : 0.4,
-                            borderColor : 'gray',
-                            width : '90%',
-                            paddingBottom : 0,}}>
-            </View>
+          </TouchableOpacity >
 
-            <View style={{ paddingBottom:15,
-                            paddingTop : 10,}}>
-                <Text style={{fontSize:15,
-                                color : 'gray',
-                                fontWeight : "bold"}}>나이</Text>
-            </View>
+          <TouchableOpacity onPress = {this.test} style = {styles.allow_r}>
+              <Icon name='chevron-right' color = 'white' size = {35}  />
+          </TouchableOpacity >
 
-            <View style={{ paddingBottom:35}}>
-                <TextInput style = {{ fontSize : 25,
-                                    color : 'black',
-                                    fontWeight : '700'}}
-                           value = {this.state.pet_age}
-                           editable ={false}></TextInput>
-            </View>
+        </View>
 
-            <View style = {{borderWidth : 0.4,
-                            borderColor : 'gray',
-                            width : '90%',
-                            paddingBottom : 0,}}>
-            </View>
+        <KeyboardAwareScrollView>
 
-            <View style={{ paddingBottom:15,
-                            paddingTop : 10}}>
-                <Text style={{fontSize:15,
-                                color : 'gray',
-                                fontWeight : "bold"}}>견종 / 묘종</Text>
-                </View>
-            <View style={{ paddingBottom:35}}>
-                <TextInput style = {{ fontSize : 25,
-                                    color : 'black',
-                                    fontWeight : '700'}}
-                           value = {this.state.pet_kind}
-                           editable ={false}></TextInput>
-            </View>
+        <View style={styles.content}>
 
-            <View style = {{borderWidth : 0.4,
-                            borderColor : 'gray',
-                            width : '90%',
-                            paddingBottom : 0,}}>
-            </View>
-
-            <View style={{ paddingBottom:20,
-                            paddingTop : 10}}>
-                <Text style={{fontSize:15,
-                                color : 'gray',
-                                fontWeight : "bold"}}>특징</Text>
-            </View>
-
-            <View style = {{borderWidth : 0.4,
-                            borderColor : 'gray',
-                            width : '90%',
-                            paddingBottom : 72,}}>
-                    
-                    <TextInput style = {{ fontSize : 15,
-                                    color : 'black',
-                                    fontWeight : '700'}}
-                               value = {this.state.pet_add}
-                               editable ={false}></TextInput>
-                  
-            </View>
+          <View style={{
+            flexDirection:'row',
+            justifyContent:'space-between',
+            alignItems:'center',
+            paddingBottom:10}}>
+            <Text style={{fontSize:19, color : 'black'}}>이름</Text>
+            <TextInput style={{
+              borderColor: 'black',  
+              width:'70%', 
+              height:35, 
+              borderWidth: 1, 
+              borderRadius: 5, 
+              padding:5}}
+              onChangeText={data => this.setState({name : data})}
+              />
           </View>
+
+          <View style={{
+            flexDirection:'row',
+            justifyContent:'space-between',
+            alignItems:'center',
+            paddingBottom:10}}>
+            <Text style={{fontSize:19, color : 'black'}}>나이</Text>
+            <TextInput 
+              palceholder = "Passwored" 
+              style={{
+              borderColor: 'black', 
+              width:'70%', 
+              height:35, 
+              borderWidth: 1,
+              borderRadius: 5, 
+              padding:5}}
+              onChangeText={data => this.setState({age : data})}
+              />
+          </View>
+
+          <View style={{
+            flexDirection:'row',
+            justifyContent:'space-between',
+            alignItems:'center',
+            paddingBottom:10}}>
+            <Text style={{fontSize:19, color : 'black'}}>견종</Text>
+            <TextInput style={{
+              borderColor: 'black', 
+              width:'70%', 
+              height:35, 
+              borderWidth: 1, 
+              borderRadius: 5, 
+              padding:5}}
+              onChangeText={data => this.setState({kind : data})}
+              />
+          </View>
+          <View style={{
+            flexDirection:'row',
+            justifyContent:'space-between',
+            alignItems:'center',
+            paddingBottom:10}}>
+            <Text style={{fontSize:19, color : 'black'}}>특이사항</Text>
+            <TextInput style={{
+              borderColor: 'black', 
+              width:'70%', 
+              height:120, 
+              borderWidth: 1, 
+              borderRadius: 5, 
+              fontSize : 12,
+              padding:5}}
+              onChangeText={data => this.setState({add : data})}
+              maxLength = {100}
+              />
+          </View>
+
         </View>
-        <View style = {styles.footer}>
-          <PetButton
-              buttonColor={'null'}
-              titleColor = {'black'}
-              title={'주인과 채팅하기'}
-              onPress = {this.Chat}>   
-          </PetButton>
+        
+        <View style={styles.footer}>
+            <View style = {styles.fbutton}>
+                <PetCButton
+                    buttonColor={'null'}
+                    titleColor = {'black'}
+                    title={'수정하기'}
+                    onPress={this.test}/>
+            </View>
         </View>
+        </KeyboardAwareScrollView>
+
       </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
-  header:{
-    backgroundColor: "rgb(161,175,210)",
-    height:200,
-    
+  container: {
+    flex: 1,
+  },
+  text : {
+    fontSize: 15,
+    fontWeight : "300",
+    color : 'black',
+  },
+  button : {
+    marginTop : '7%',
+    marginBottom : 5,
+    borderColor: 'black', 
+    height:35, 
+    borderWidth: 1, 
+    borderRadius: 5, 
+    padding:5
+  },
+  allow_l : {
+
+    position: 'absolute',
+    marginTop : '22%',
+    marginLeft : '10%',
+    //alignContent : 'center',
+    //alignSelf : 'center',
+    //justifyContent : 'center',
+  },
+  allow_r : {
+    position: 'absolute',
+    marginTop : '22%',
+    marginLeft : '83%',
+    //alignContent : 'center',
+    //alignSelf : 'center',
+    //justifyContent : 'center',
   },
   avatar: {
     width: 180,
@@ -230,34 +293,46 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop:10
   },
-  font:{
-    color : "black",
-    fontSize : 40,
-    fontWeight : '700',
+
+  header: {
+    backgroundColor: "rgb(161,175,210)",
+    height:200,
   },
-  body:{
-    marginTop:20,
+  title: {
+    //paddingBottom:100,
+    width:'100%',
+    height:'18%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent : 'center',
+    //backgroundColor: '#9aa9ff',
   },
-  bodyContent: {
-    flex :0.2 ,
-   // marginTop : '10%',
-    paddingLeft:25,
+  petimage : {
+    flex : 1,
+
+  },
+  content: {
+    //flex :1 ,
+    paddingTop : 50,
+    paddingLeft:10,
     paddingRight:10,
-    paddingBottom:20,
+//    paddingBottom:20,
+   // backgroundColor: '#d6ca1a',
   },
-  name:{
-    fontSize:28,
-    color: "#696969",
-    fontWeight: "600"
-  },
-
   footer: {
-    marginLeft  : '40%',
-    marginTop : 300,
-    height : 55,
-    width:'60%',
 
+    marginTop : '7%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width:'100%',
+    height:'15%',
     //backgroundColor: '#1ad657',
   },
+  fbutton : {
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignContent : 'center',
+  },
 });
-export default info;
+export default PetChange;

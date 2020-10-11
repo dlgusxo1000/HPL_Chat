@@ -133,7 +133,7 @@
             <Text style={styles.TextStyle}> QR코드 생성</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            onPress={this.capitureScreen}
+            onPress={this.goInfo}
             activeOpacity={0.7}
             style={styles.button2}>
             <Text style={styles.TextStyle2}> 저장하기</Text>
