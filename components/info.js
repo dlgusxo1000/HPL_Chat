@@ -209,7 +209,7 @@ class info extends Component {
 
     openMessages(roomKey, guest_id) {
       
-      this.props.navigation.navigate('Chat', {roomKey : roomKey, user_id : guest_id});
+      this.props.navigation.navigate('Chat_De', {roomKey : roomKey, user_id : guest_id});
         
       
     }

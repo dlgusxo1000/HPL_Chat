@@ -39,7 +39,6 @@
     getTextInputValue = () => {
       const value = 'myapp://info/';
       const temt = value + this.state.roomKey;
-      Alert.alert(this.state.user_id);
       this.setState({ valueForQRCode: temt });
       
     };

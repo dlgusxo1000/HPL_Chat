@@ -39,6 +39,16 @@ const TabNavigation = createBottomTabNavigator(
                 tabBarIcon : ({focused, tintColor}) => <Icon name = 'comment' style = {{color : tintColor}}/>
             }
         },
+        Setting : {
+            screen: Setting,
+            navigationOptions : {
+                title : 'Set',
+                tabBarIcon : ({focused, tintColor}) => <Icon name = 'cog' style = {{color : tintColor}}
+                />
+                
+            }
+            
+        }
         
     },
     {

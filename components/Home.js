@@ -157,7 +157,7 @@ class Home extends React.Component {
             <TouchableOpacity onPress={this.onPress3} style={styles.buttonGroup}>
               <View>
                 <Icon name="qrcode" size={75} color="white" /> 
-                <Text style={styles.imagetext}>QR코드 생성</Text>
+                <Text style={styles.imagetext}>QR코드</Text>
   
               </View>
             </TouchableOpacity>
@@ -165,8 +165,8 @@ class Home extends React.Component {
               onPress={this.onPress} 
               style={styles.buttonGroup}>
               <View>
-                <Icon name="comments" size={75} color="white" /> 
-                <Text style={styles.imagetext}>채팅방 입장</Text>
+                <Icon name="cog" size={75} color="white" /> 
+                <Text style={styles.imagetext}>정보 등록</Text>
   
               </View>
             </TouchableOpacity>
@@ -189,7 +189,7 @@ class Home extends React.Component {
             style = {styles.buttonGroup}>
               <View >
                 <Icon name="comment" size={75} color="white" /> 
-                <Text style={styles.imagetext}>채팅방 생성</Text>
+                <Text style={styles.imagetext}>채팅방 입장</Text>
               </View>
             </TouchableOpacity>
           </View>

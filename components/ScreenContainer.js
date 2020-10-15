@@ -8,6 +8,7 @@ import Push from './Push';
 import PetChange from './PetChange';
 import Pet_mo_de from './Pet_mo_de';
 import Setting from './Setting';
+import Chat_De from './Chat_De';
 
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator, HeaderBackButton  } from 'react-navigation-stack';
@@ -54,11 +55,14 @@ const  AppStack = createStackNavigator({
   Pet_mo_de : {
     screen : Pet_mo_de
   },
+  Chat_De : {
+    screen : Chat_De
+  }
 },
 {
   initialRouteName: "Login",
   defaultNavigationOptions:{
-    headerLeft: ()=> <Icon name='font-awesome-logo-full' size= {20} style={{ paddingLeft:30}} color ={'rgb(161,175,210)'}/>,
+    headerLeft : ()=> <Icon name='font-awesome-logo-full' size= {20} style={{ paddingLeft:30}} color ={'rgb(161,175,210)'}/>,
     headerTitle : ()=> (<View style={{alignItems: 'center',flex:1}}><Text style={{fontSize: 17, color: 'white'}}>HPL</Text></View>),
     headerStyle : {backgroundColor: 'rgb(161,175,210)'},
     headerRight:() => <Icon name='font-awesome-logo-full' size = {20}style={{ paddingRight:30}} color ={'rgb(161,175,210)'}/>,
