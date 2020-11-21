@@ -178,6 +178,7 @@ class Login extends React.Component {
                     borderRadius: 10,
                     padding:5,
                     borderColor :'white'}}
+                    secureTextEntry = {true}
                     onChangeText={user_password => this.setState({user_password})}
             />
           </View>

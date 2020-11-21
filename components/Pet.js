@@ -70,10 +70,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
     uploadImage = async (uri, userUID, temp) => {
 
-     
-      
-
-      
       const blob = await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.onload = () => {
@@ -84,8 +80,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
           xhr.send(null);
       });
 
-      
-  
+
       let ref = firebaseApp
           .storage()
           .ref(`images/${userUID}/${temp}.png`);

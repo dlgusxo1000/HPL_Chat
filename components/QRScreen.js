@@ -1,4 +1,4 @@
-  import React from 'react'
+  import React,{useRef} from 'react'
   import QRCode from 'react-native-qrcode-svg';
   import * as Linking from 'expo-linking';
   import { captureScreen,  captureRef } from 'react-native-view-shot';
@@ -13,13 +13,16 @@
       Text,
       Button
   } from 'react-native';
-  
+
+
+
   class QRScreen extends React.Component {
-    card = React.createRef();
+
+    viewshot = React.createRef();
     qrCode = '';
     state = {
       inputT: '',
-      roomKey: '',
+      roomKey: this.props.navigation.state.params.roomKey,
       valueForQRCode: 'myapp://info',
       user_id : this.props.navigation.state.params.user_id,
       url : '',
@@ -27,13 +30,8 @@
     };
 
     componentDidMount() {
-      if(this.props.navigation.state.params){
-        const roomKey = this.props.navigation.state.params.roomKey;
-        const user_id = this.props.navigation.state.params.user_id;
-        this.setState({roomKey : roomKey, user_id : user_id});
-        
-        
-      }
+      this.getTextInputValue();
+      
     }
 
     getTextInputValue = () => {
@@ -42,49 +40,27 @@
       this.setState({ valueForQRCode: temt });
       
     };
-  
+
     goInfo = () => {
-      this.props.navigation.navigate('info', {roomKey : this.state.roomKey, user_id : this.state.user_id});
-    // Alert.alert(this.state.user_id);
+    // this.props.navigation.navigate('info', {roomKey : this.state.roomKey, user_id : this.state.user_id});
+    Alert.alert(this.state.roomKey);
     }
 
-    takeSnapshot = async () => {
-      
-         
-      if (this.card.current) {
-        const snapshot = await captureRef(this.card, {
-          result: 'data-uri',
-        });
-        this.setState({
-          snapshot,
-        });
-        
-      }
-      this.uploadImage(this.state.snapshot);
-    };
 
 
     capitureScreen = () => {
-      if (this.card.current){
-        captureScreen({
-          format: "jpg",
-          quality: 0.8,
-          }).then(
-          uri => this.setState({ url : uri }),
-          error => console.error("Oops, snapshot failed", error)
-          );
-          console.log(this.state.url);
-          this.uploadImage(this.state.url);
-      }
       
-         
+      captureRef(this.viewshot, {     
+        }).then(
+          (uri) => this.uploadImage(uri),
+          error => console.error("Oops, snapshot failed", error)
+        );
+        Alert.alert('asd');
+        
+    
   }
 
-
-
   uploadImage = async (uri) => {
-
-   
 
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -99,43 +75,39 @@
     const ref = firebaseApp
         .storage()
         .ref()
-        .child(`userImages/${this.state.user_id} + qr`);
+        .child(`userImages/${this.state.user_id}+qr`);
 
     let snapshot = await ref.put(blob);
 
-    return await snapshot.ref.getDownloadURL();
+    //return await snapshot.ref.getDownloadURL();
   };
-  
+
     render() {
-      
 
       return (
         <View style={styles.container}>
           <View style = {styles.div}>
-            <View style = {styles.content}>
-
-    
-
-          <QRCode
             
-            value={this.state.valueForQRCode}
-            size={200}
-            bgColor='#000000'
-            fgColor='#FFFFFF'
-            />
-
+            <View style = {styles.content}>
+            <ViewShot ref={this.viewshot} options={{ width: 100, height: 100, format: "jpg", quality: 1.0 }}>
+              <View style={{ padding: 10, backgroundColor: '#FFFFFF' }}>
+                <QRCode
+                  value={this.state.valueForQRCode}
+                  size={200}
+                  bgColor='#000000'
+                  fgColor='#FFFFFF'
+                />
+              </View>
+              </ViewShot>
+                
       
+          
+     
           <TouchableOpacity 
-            onPress={this.getTextInputValue}
+            onPress={this.capitureScreen}
             activeOpacity={0.7}
             style={styles.button}>
-            <Text style={styles.TextStyle}> QR코드 생성</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={this.goInfo}
-            activeOpacity={0.7}
-            style={styles.button2}>
-            <Text style={styles.TextStyle2}> 저장하기</Text>
+            <Text style={styles.TextStyle}> 저장하기</Text>
           </TouchableOpacity>
           
           </View>
@@ -144,7 +116,7 @@
       );
     };
   }
-  
+
   const styles = StyleSheet.create({
       container: {
         flex: 1,
@@ -153,8 +125,8 @@
       },
       div : {
         backgroundColor : 'white',
-        height : '80%',
-        marginTop : '19%',
+        height : '70%',
+        marginTop : '28%',
         marginBottom : '0%',
         marginRight : '7%',
         marginLeft : '7%',
@@ -168,14 +140,14 @@
         marginTop : '40%',
       },
       button: {
-        width: '65%',
+        width: '61%',
         backgroundColor: 'rgb(62,180,209)',
-        height : '20%',
+        height : '26%',
         justifyContent:'center',
         alignItems: 'center',
         alignContent : 'center',
         borderRadius: 9,
-        marginTop :'10%',
+        marginTop :'15%',
       },
       button2 : {
         width: '65%',
@@ -186,14 +158,14 @@
         alignItems: 'center',
         alignContent : 'center',
         borderRadius: 9,
-        marginTop :'10%',
+        marginBottom :'10%',
         borderWidth : 1,
 
       },
     
       TextStyle: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 20,
         marginBottom : '5%'
       },
       TextStyle2: {
@@ -201,7 +173,7 @@
         fontSize: 18,
         marginBottom : '5%'
       },
-  
+
       input: {
           width: '65%',
           height: 40,
@@ -214,5 +186,5 @@
       },
 
   });
-  
+
   export default QRScreen;

@@ -12,7 +12,6 @@ import Chat_De from './Chat_De';
 
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator, HeaderBackButton  } from 'react-navigation-stack';
-import { createSwitchNavigator} from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {View,Text} from 'react-native';
 
@@ -61,14 +60,23 @@ const  AppStack = createStackNavigator({
 },
 {
   initialRouteName: "Login",
-  defaultNavigationOptions:{
-    headerLeft : ()=> <Icon name='font-awesome-logo-full' size= {20} style={{ paddingLeft:30}} color ={'rgb(161,175,210)'}/>,
-    headerTitle : ()=> (<View style={{alignItems: 'center',flex:1}}><Text style={{fontSize: 17, color: 'white'}}>HPL</Text></View>),
-    headerStyle : {backgroundColor: 'rgb(161,175,210)'},
-    headerRight:() => <Icon name='font-awesome-logo-full' size = {20}style={{ paddingRight:30}} color ={'rgb(161,175,210)'}/>,
-  }
-});
 
+  defaultNavigationOptions:{
+    //headerLeft : () => <Icon name='home' color = 'rgb(161,175,210)' size = {20} style={{ paddingLeft:10}}/>,
+    headerTitle : ()=> <View style={{flex : 1, 
+                             justifyContent: 'center',
+                             alignItems: 'center', 
+                             alignContent : 'center' }}>
+                          <Text style={{fontSize: 20, color: 'white', paddingRight : 0,}}>
+                          <Icon name='dog' size= {20} style={{ color : 'white'}}/>HPL</Text>
+                       </View>,
+    headerStyle : {backgroundColor: 'rgb(161,175,210)'},
+    //headerRight :() => <Icon name='home' color = 'rgb(161,175,210)' size = {20} style={{ paddingRight:20}}/>
+  }
+
+
+
+});
 const Navigator = createAppContainer(AppStack);
 
 export default Navigator;
