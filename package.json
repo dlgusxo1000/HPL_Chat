@@ -42,7 +42,7 @@
     "react-native-maps": "^0.27.1",
     "react-native-navigation": "^1.1.472",
     "react-native-qrcode-svg": "^6.0.3",
-    "react-native-reanimated": "~1.4.0",
+    "react-native-reanimated": "~2.10.0",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
     "react-native-share": "^3.7.1",
